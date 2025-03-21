@@ -21,5 +21,5 @@ public class Kategori {
     @Column(name = "kategori_id", nullable = false)
     private Integer kategoriId;
 
-    private String namaKategori;
+    private String nama;
 }

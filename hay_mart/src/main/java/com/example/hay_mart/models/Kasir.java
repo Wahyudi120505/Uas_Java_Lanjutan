@@ -27,13 +27,13 @@ public class Kasir {
     @Column(name = "kasir_id", nullable = false)
     private Integer kasirId;
 
-    private String name;
+    private String nama;
     private String email;
 
     @Lob
     private Blob image;
 
-    @Transient // Tidak akan disimpan di
+    @Transient // Tidak akan disimpan di database
     private String base64Image;
 
     @OneToOne

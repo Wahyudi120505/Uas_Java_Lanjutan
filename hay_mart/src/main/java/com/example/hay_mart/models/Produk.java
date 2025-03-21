@@ -26,7 +26,7 @@ public class Produk {
     @Column(name = "produk_id", nullable = false)
     private Integer produkId;
 
-    private String nameProduk;
+    private String nama;
     private Integer harga;
     private Integer stok;
     private String keterangan;

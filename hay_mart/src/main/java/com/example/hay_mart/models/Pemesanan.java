@@ -33,7 +33,7 @@ public class Pemesanan {
     private Kasir kasir;
 
     @Column(nullable = false)
-    private LocalDateTime tanggal;
+    private LocalDateTime tanggalPembelian;
 
     @Column(nullable = false)
     private Long totalHarga;
