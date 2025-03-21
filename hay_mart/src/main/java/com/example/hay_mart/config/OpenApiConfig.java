@@ -33,7 +33,7 @@ public class OpenApiConfig {
             .title("UAS JAVA LANJUTAN")
             .version("0.1")
             .contact(contact)
-            .description("This API is use for UTS project of java")
+            .description("This API is use for project of java")
             .termsOfService("http://www.test.com/term")
             .license(license);
 
