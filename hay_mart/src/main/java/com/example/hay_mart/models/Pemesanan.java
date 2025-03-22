@@ -29,8 +29,8 @@ public class Pemesanan {
     private Integer pemesananId;
 
     @ManyToOne
-    @JoinColumn(name = "kasir_id", referencedColumnName = "kasir_id", nullable = false)
-    private Kasir kasir;
+    @JoinColumn(name = "kasir_id", referencedColumnName = "user_id", nullable = false)
+    private User userKasir;
 
     @Column(nullable = false)
     private LocalDateTime tanggalPembelian;

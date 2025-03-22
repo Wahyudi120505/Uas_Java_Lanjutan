@@ -9,12 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.hay_mart.constant.RoleConstant;
-import com.example.hay_mart.models.Akun;
 import com.example.hay_mart.models.Kategori;
 import com.example.hay_mart.models.Role;
-import com.example.hay_mart.repositorys.AkunRepository;
+import com.example.hay_mart.models.User;
 import com.example.hay_mart.repositorys.KategoriRepository;
 import com.example.hay_mart.repositorys.RoleRepository;
+import com.example.hay_mart.repositorys.UserRepository;
 
 @Component
 public class InitialDataLoader implements ApplicationRunner{
@@ -25,7 +25,7 @@ public class InitialDataLoader implements ApplicationRunner{
     private RoleRepository roleRepository;
 
     @Autowired
-    private AkunRepository akunRepository;
+    private UserRepository akunRepository;
 
     @Autowired
     private KategoriRepository kategoriRepository;
@@ -33,15 +33,15 @@ public class InitialDataLoader implements ApplicationRunner{
     @Override
     public void run(ApplicationArguments args) throws Exception{
         if (roleRepository.findAll().isEmpty()) {
-            Role admin = new Role(null, "ADMIN");
-            Role kasir = new Role(null, "KASIR");
+            Role admin = new Role(null, RoleConstant.ROLE_ADMIN);
+            Role kasir = new Role(null, RoleConstant.ROLE_KASIR);
             roleRepository.saveAll(List.of(admin,kasir));
         }
 
         if (akunRepository.findAll().isEmpty()) {
-            Akun admin = Akun.builder()
-                .akunId(null)
-                .username("ADMIN")
+            User admin = User.builder()
+                .userId(null)
+                .email("admin123@gmail.com")
                 .password(passwordEncoder.encode("ADMIN"))
                 .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
                 .build();
