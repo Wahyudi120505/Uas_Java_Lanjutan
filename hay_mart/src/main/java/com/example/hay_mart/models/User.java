@@ -1,7 +1,6 @@
 package com.example.hay_mart.models;
 
 import java.sql.Blob;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

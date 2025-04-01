@@ -2,14 +2,11 @@ package com.example.hay_mart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.models.Kategori;
 import com.example.hay_mart.models.Produk;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;

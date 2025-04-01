@@ -6,4 +6,5 @@ import java.sql.SQLException;
 
 public interface ConvertImageService{
     public String convertImage(Blob blob) throws IOException, SQLException;
+    public Blob convertString(String image) throws IOException, SQLException;
 }
