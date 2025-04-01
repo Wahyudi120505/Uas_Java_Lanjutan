@@ -29,6 +29,7 @@ public class User {
     private String nama;
     private String email;
     private String password;
+    private String status;
 
     @Lob
     private Blob image;

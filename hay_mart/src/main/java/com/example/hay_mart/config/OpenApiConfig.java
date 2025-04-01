@@ -10,6 +10,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
@@ -38,7 +40,15 @@ public class OpenApiConfig {
             .license(license);
 
 
-        return new OpenAPI().info(info).servers(List.of(localServer));
+        return new OpenAPI().info(info).servers(List.of(localServer))
+                    .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                    .components(new io.swagger.v3.oas.models.Components()
+                                    .addSecuritySchemes("Bearer Authentication",
+                                        new SecurityScheme()
+                                            .name("Bearer Authentication")
+                                            .type(SecurityScheme.Type.HTTP)
+                                            .scheme("bearer")
+                                            .bearerFormat("JWT")));
 
 
     }
