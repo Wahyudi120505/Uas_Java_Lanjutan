@@ -1,13 +1,11 @@
 package com.example.hay_mart.init;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import com.example.hay_mart.constant.RoleConstant;
 import com.example.hay_mart.models.Kategori;
 import com.example.hay_mart.models.Role;
@@ -53,10 +51,9 @@ public class InitialDataLoader implements ApplicationRunner{
             Kategori minuman = new Kategori(null, "Minuman");
             Kategori kecantikan = new Kategori(null, "Kecantikan");
             Kategori aksesoris = new Kategori(null, "Aksesoris");
-            Kategori pakaian = new Kategori(null, "Pakaian");
             Kategori elektronik = new Kategori(null, "Elektronik");
-            Kategori kesehatan = new Kategori(null, "Kesehatan");
-            kategoriRepository.saveAll(List.of(makanan,minuman,kecantikan,aksesoris,pakaian,elektronik,kesehatan));
+            Kategori obatan = new Kategori(null, "Obat-obatan");
+            kategoriRepository.saveAll(List.of(makanan,minuman,kecantikan,aksesoris,elektronik,obatan));
         }
     }
 }

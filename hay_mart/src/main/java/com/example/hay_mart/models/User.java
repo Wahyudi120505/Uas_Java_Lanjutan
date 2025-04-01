@@ -1,7 +1,6 @@
 package com.example.hay_mart.models;
 
 import java.sql.Blob;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +28,7 @@ public class User {
     private String nama;
     private String email;
     private String password;
+    private String status;
 
     @Lob
     private Blob image;
