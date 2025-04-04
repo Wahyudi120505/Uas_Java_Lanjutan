@@ -1,4 +1,4 @@
-package com.example.hay_mart.services.login;
+package com.example.hay_mart.services;
 
 import java.util.Collection;
 import java.util.Collections;

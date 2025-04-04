@@ -14,6 +14,5 @@ public class ProdukRequest {
     private Integer harga;
     private Integer stok;
     private String keterangan;
-    private String image;
     private String kategori;
 }

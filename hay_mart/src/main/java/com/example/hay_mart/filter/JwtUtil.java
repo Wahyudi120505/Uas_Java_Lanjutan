@@ -18,7 +18,7 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Date extractExpiration(String token){
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
@@ -30,16 +30,19 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("authorities", userDetails.getAuthorities()) 
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 jam
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
-    public boolean isTokenValid(String token,  UserDetails userdetail){
+
+    public boolean isTokenValid(String token, UserDetails userdetail) {
         final String username = extractUsername(token);
         return (username.equals(userdetail.getUsername()) && !isTokenExpired(token));
     }
-    private boolean isTokenExpired(String token){
+
+    private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 }

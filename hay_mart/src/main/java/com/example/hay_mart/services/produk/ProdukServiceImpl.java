@@ -3,22 +3,23 @@ package com.example.hay_mart.services.produk;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import com.example.hay_mart.services.image.ConvertImageServiceImpl;
+
+import javax.sql.rowset.serial.SerialBlob;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
 import com.example.hay_mart.dao.ProdukDao;
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.dto.produk.ProdukRequest;
 import com.example.hay_mart.dto.produk.ProdukResponse;
-import com.example.hay_mart.dto.produk.UpdateProduk;
 import com.example.hay_mart.models.Kategori;
+import com.example.hay_mart.models.LaporanProduk;
 import com.example.hay_mart.models.Produk;
 import com.example.hay_mart.repositorys.KategoriRepository;
+import com.example.hay_mart.repositorys.LaporanProdukRepository;
 import com.example.hay_mart.repositorys.ProdukRepository;
 import com.example.hay_mart.services.image.ConvertImageService;
 
@@ -26,7 +27,6 @@ import com.example.hay_mart.services.image.ConvertImageService;
 @Slf4j
 public class ProdukServiceImpl implements ProdukService {
 
-    private final ConvertImageServiceImpl convertImageServiceImpl;
     @Autowired
     ProdukDao produkDao;
 
@@ -37,35 +37,48 @@ public class ProdukServiceImpl implements ProdukService {
     KategoriRepository kategoriRepository;
 
     @Autowired
+    LaporanProdukRepository laporanProdukRepository;
+
+    @Autowired
     ConvertImageService convertImage;
 
-    ProdukServiceImpl(ConvertImageServiceImpl convertImageServiceImpl) {
-        this.convertImageServiceImpl = convertImageServiceImpl;
-    }
 
     @Override
     public Integer getProduksPage() {
-        Integer totalPage = (int) Math.ceil((double) produkRepository.findAll().size() / 10);
-        return totalPage;
+        return (int) Math.ceil((double) produkRepository.count() / 10);
+    }
+    
+    @Override
+    public void create(ProdukRequest request, MultipartFile image) {
+        try {
+            Produk produk = toProduk(request, image);
+            produkRepository.save(produk);
+
+            LaporanProduk laporan = LaporanProduk.builder()
+                        .produk(produk)
+                        .namaProduk(produk.getNama())
+                        .jumlahTerjual(0)
+                        .hargaSatuan(produk.getHarga())
+                        .total(0)
+                        .build();
+            laporanProdukRepository.save(laporan);
+        } catch (Exception e) {
+            log.error("Error creating product: {}", e.getMessage());
+            throw new RuntimeException("Gagal menyimpan produk: " + e.getMessage());
+        }
     }
 
     @Override
-    public void create(ProdukRequest request) {
-        produkRepository.save(toProduk(request));
-    }
-
-    @Override
-    public PageResponse<ProdukResponse> getAllProduks(String nama, String kategori, int page, int size, String sortBy,
-            Integer minPrice, Integer maxPrice) {
-
+    public PageResponse<ProdukResponse> getAllProduks(String nama, String kategori, int page, int size, String sortBy, String sortOrder,
+                                                      Integer minPrice, Integer maxPrice) {
         Kategori namaKategori = kategoriRepository.findKategoriByNama(kategori);
-        PageResponse<Produk> produkPage = produkDao.getAll(nama, namaKategori, page, size, sortBy, minPrice, maxPrice);
+        PageResponse<Produk> produkPage = produkDao.getAll(nama, namaKategori, page, size, sortBy, sortOrder, minPrice, maxPrice);
 
         List<ProdukResponse> produkResponses = produkPage.getItems().stream()
                 .map(this::toProdukResponse)
                 .collect(Collectors.toList());
 
-        return PageResponse.success(produkResponses, page, size, size);
+        return PageResponse.success(produkResponses, produkPage.getPage(), produkPage.getSize(), produkPage.getTotalItem());
     }
 
     private ProdukResponse toProdukResponse(Produk produk) {
@@ -80,22 +93,20 @@ public class ProdukServiceImpl implements ProdukService {
                     .kategori(produk.getKategori().getNama())
                     .build();
         } catch (IOException | SQLException e) {
-            e.printStackTrace();
-            return null;
+            log.error("Error converting product response: {}", e.getMessage());
+            throw new RuntimeException("Gagal mengkonversi data produk: " + e.getMessage());
         }
     }
 
-    private Produk toProduk(ProdukRequest request) {
+    private Produk toProduk(ProdukRequest request, MultipartFile image) {
         try {
             Kategori kategori = kategoriRepository.findKategoriByNama(request.getKategori());
-
             if (kategori == null) {
                 throw new RuntimeException("Kategori tidak ditemukan: " + request.getKategori());
             }
 
-            boolean exists = produkRepository.existsByNamaIgnoreCase(request.getNama());
-            if (exists) {
-                throw new IllegalArgumentException("Produk dengan nama '" + request.getNama() + "' sudah ada!");
+            if (produkRepository.existsByNamaIgnoreCase(request.getNama())) {
+                throw new RuntimeException("Produk dengan nama '" + request.getNama() + "' sudah ada!");
             }
 
             String status = request.getStok() > 0 ? "Tersedia" : "Tidak Tersedia";
@@ -103,53 +114,47 @@ public class ProdukServiceImpl implements ProdukService {
                     .nama(request.getNama())
                     .harga(request.getHarga())
                     .stok(request.getStok())
-                    .fotoProduk(convertImageServiceImpl.convertString(request.getImage()))
+                    .fotoProduk(new SerialBlob(image.getBytes()))
                     .keterangan(request.getKeterangan())
                     .status(status)
                     .kategori(kategori)
                     .build();
         } catch (IOException | SQLException e) {
-            e.printStackTrace();
-            return null;
+            log.error("Error creating product entity: {}", e.getMessage());
+            throw new RuntimeException("Gagal memproses data produk: " + e.getMessage());
         }
     }
 
     @Override
-    public void update(int id, UpdateProduk uproduk) {
-        Optional<Produk> produk = produkRepository.findById(id);
-        Kategori kategori = kategoriRepository.findKategoriByNama(uproduk.getKategori());
-
-        if (kategori == null) {
-            throw new RuntimeException("Kategori tidak ditemukan: " + uproduk.getKategori());
-        }
-
-        //ini entah mau diapake ap enggak karna tiap ngupdate harus ganti nama jg
-        boolean exists = produkRepository.existsByNamaIgnoreCase(uproduk.getNama());
-        if (exists) {
-            throw new IllegalArgumentException("Produk dengan nama '" + uproduk.getNama() + "' sudah ada!");
-        }
-
-        String status = uproduk.getStok() > 0 ? "Tersedia" : "Tidak Tersedia";
-
+    public void update(int id, ProdukRequest uproduk, MultipartFile image) {
         try {
-            if (produk.isPresent()) {
-                Produk produkToUpdate = produk.get();
-                produkToUpdate.setNama(uproduk.getNama());
-                produkToUpdate.setHarga(uproduk.getHarga());
-                produkToUpdate.setStok(uproduk.getStok());
-                produkToUpdate.setKeterangan(uproduk.getKeterangan());
-                produkToUpdate.setFotoProduk(convertImageServiceImpl.convertString(uproduk.getImage()));
-                produkToUpdate.setStatus(status);
-                produkToUpdate.setKategori(kategori);
-                produkRepository.save(produkToUpdate);
+            Produk produk = produkRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Produk dengan id " + id + " tidak ditemukan"));
 
-            } else {
-                log.debug("Produk id yang di cari : {}", id);
-                log.info("Produk id yang di cari : {}", id);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Produk id tidak ditemukan");
+            Kategori kategori = kategoriRepository.findKategoriByNama(uproduk.getKategori());
+            if (kategori == null) {
+                throw new RuntimeException("Kategori tidak ditemukan: " + uproduk.getKategori());
             }
+
+            if (produkRepository.existsByNamaIgnoreCase(uproduk.getNama()) &&
+                    !produk.getNama().equalsIgnoreCase(uproduk.getNama())) {
+                throw new RuntimeException("Produk dengan nama '" + uproduk.getNama() + "' sudah ada!");
+            }
+
+            String status = uproduk.getStok() > 0 ? "Tersedia" : "Tidak Tersedia";
+
+            produk.setNama(uproduk.getNama());
+            produk.setHarga(uproduk.getHarga());
+            produk.setStok(uproduk.getStok());
+            produk.setKeterangan(uproduk.getKeterangan());
+            produk.setFotoProduk(new SerialBlob(image.getBytes()));
+            produk.setStatus(status);
+            produk.setKategori(kategori);
+            produkRepository.save(produk);
+
         } catch (IOException | SQLException e) {
-            e.printStackTrace();
+            log.error("Error updating product: {}", e.getMessage());
+            throw new RuntimeException("Gagal memperbarui produk: " + e.getMessage());
         }
     }
 }

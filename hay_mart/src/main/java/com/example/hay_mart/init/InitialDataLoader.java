@@ -40,8 +40,10 @@ public class InitialDataLoader implements ApplicationRunner{
             User admin = User.builder()
                 .userId(null)
                 .email("admin123@gmail.com")
+                .nama("ADMIN")
                 .password(passwordEncoder.encode("ADMIN"))
                 .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
+                .status("active")
                 .build();
             akunRepository.save(admin);
         }
