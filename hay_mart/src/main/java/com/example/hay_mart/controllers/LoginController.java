@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.hay_mart.dto.GenericResponse;
+import com.example.hay_mart.dto.login.ForgotPWRequest;
 import com.example.hay_mart.dto.login.LoginRequest;
 import com.example.hay_mart.dto.login.RegisRequest;
+import com.example.hay_mart.dto.login.ResetPWRequest;
+import com.example.hay_mart.services.login.ForgotPWService;
 import com.example.hay_mart.services.login.LoginService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginController {
     @Autowired 
     LoginService loginService;
+
+    @Autowired
+    ForgotPWService forgotPWService;
     
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest request) {
@@ -46,5 +52,17 @@ public class LoginController {
             log.info(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
         }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPWRequest request){
+        forgotPWService.sendtoEmail(request);
+        return ResponseEntity.ok("kode OTP akan segera dikirim melalui email anda");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPWRequest request){
+        forgotPWService.resetPassword(request);
+        return ResponseEntity.ok("Password berhasil diubah");
     }
 }

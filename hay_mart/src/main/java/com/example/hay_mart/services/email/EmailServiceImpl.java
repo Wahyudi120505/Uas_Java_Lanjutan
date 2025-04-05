@@ -42,4 +42,27 @@ public class EmailServiceImpl implements EmailService{
         String content = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
         return content.replace("{{nama}}", nama);
     }
+
+    @Override
+    public void sendOtpEmail(String to, String otp){
+        try {
+            String emailBody = loadOtpTemplate(otp);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject("Kode OTP Reset Password Haymart");
+            helper.setText(emailBody, true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Gagal mengirim email OTP",e);
+        }
+    }
+
+    private String loadOtpTemplate(String otp) throws IOException {
+        ClassPathResource resource = new ClassPathResource("template/forgot-pw.html");
+        String content = Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
+        return content.replace("{{otp}}", otp);
+    }
 }
