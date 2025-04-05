@@ -53,7 +53,7 @@ public class LoginServiceImpl implements LoginService {
                 .orElseThrow(() -> new RuntimeException("Akun tidak ada/tidak terdaftar"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Kredensial yang tidak valid");
+            throw new RuntimeException("Email Atau Password Salah");
         }
 
         if (RoleConstant.ROLE_KASIR.equalsIgnoreCase(user.getRole().getRoleName())

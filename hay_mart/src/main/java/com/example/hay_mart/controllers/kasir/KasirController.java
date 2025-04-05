@@ -1,0 +1,39 @@
+package com.example.hay_mart.controllers.kasir;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.hay_mart.dto.GenericResponse;
+import com.example.hay_mart.dto.PageResponse;
+import com.example.hay_mart.dto.kasir.KasirResponse;
+import com.example.hay_mart.services.kasir.KasirService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@RequestMapping("/kasir")
+@Slf4j
+public class KasirController {
+
+    @Autowired
+    KasirService kasirService;
+
+    @GetMapping("/get-all-kasir")
+    public ResponseEntity<Object> getAllKasir(
+            @RequestParam(required = false) String nama,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder) {
+        try {
+            PageResponse<KasirResponse> response = kasirService.getAllKasir(nama, page, 10, sortBy, sortOrder);
+            return ResponseEntity.ok().body(GenericResponse.success(response, "Success Get All Kasir"));
+        } catch (Exception e) {
+            log.info("Error saat ambil data kasir: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
+        }
+    }
+}

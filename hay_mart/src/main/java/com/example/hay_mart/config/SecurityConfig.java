@@ -46,7 +46,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**", "/produk/get-produk-page", "produk/get-all-produks").permitAll()
-            .requestMatchers("/produk/**", "/laporan/**").hasAuthority(RoleConstant.ROLE_ADMIN)
+            .requestMatchers("/produk/**", "/laporan/**", "/kasir/**").hasAuthority(RoleConstant.ROLE_ADMIN)
             .requestMatchers("/pemesanan/**").hasAuthority(RoleConstant.ROLE_KASIR)
             .anyRequest().authenticated()
         )

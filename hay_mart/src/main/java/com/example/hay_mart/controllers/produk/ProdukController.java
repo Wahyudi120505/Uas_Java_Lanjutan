@@ -51,7 +51,7 @@ public class ProdukController {
     }
 
     @GetMapping("/get-all-produks")
-    public ResponseEntity<Object> getAll(@RequestParam int page,
+    public ResponseEntity<Object> getAll(@RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String nama,
             @RequestParam(required = false) String kategori,
             @RequestParam(required = false) String sortBy,
