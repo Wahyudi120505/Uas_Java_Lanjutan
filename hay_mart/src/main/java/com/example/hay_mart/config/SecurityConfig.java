@@ -45,9 +45,9 @@ public class SecurityConfig {
         .cors(cors -> cors.configure(http))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**").permitAll()
+            .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**", "/produk/get-produk-page", "produk/get-all-produks").permitAll()
             .requestMatchers("/produk/**", "/laporan/**").hasAuthority(RoleConstant.ROLE_ADMIN)
-            .requestMatchers("/pemesanan/**").hasAuthority("KASIR")
+            .requestMatchers("/pemesanan/**").hasAuthority(RoleConstant.ROLE_KASIR)
             .anyRequest().authenticated()
         )
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

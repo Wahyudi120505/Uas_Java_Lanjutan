@@ -1,12 +1,23 @@
 package com.example.hay_mart.services.pemesanan;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.hay_mart.dto.pemesanan.DetailPemesananResponse;
 import com.example.hay_mart.dto.pemesanan.ItemRequest;
@@ -22,7 +33,10 @@ import com.example.hay_mart.repositorys.PemesananRepository;
 import com.example.hay_mart.repositorys.ProdukRepository;
 import com.example.hay_mart.services.GetAuthorities;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class PemesananServiceImpl implements PemesananService {
     @Autowired
     private PemesananRepository pemesananRepository;
@@ -152,4 +166,187 @@ public class PemesananServiceImpl implements PemesananService {
 
         return responseList;
     }
-}
+
+    @Override
+    @Transactional
+    public ByteArrayOutputStream generateStrukPdf(Integer pemesananId) {
+        Pemesanan pemesanan = pemesananRepository.findById(pemesananId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pemesanan tidak ditemukan"));
+    
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
+        try (PDDocument document = new PDDocument()) {
+            PDFont boldFont = PDType1Font.HELVETICA_BOLD;
+            PDFont regularFont = PDType1Font.HELVETICA;
+    
+            float margin = 50;
+            float yStart = PDRectangle.A4.getHeight() - margin;
+            float pageWidth = PDRectangle.A4.getWidth() - 2 * margin;
+            float yPosition = yStart;
+    
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+    
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+    
+            try {
+                // Title
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 16);
+                float titleWidth = boldFont.getStringWidth("HAY MART") / 1000 * 16;
+                contentStream.newLineAtOffset((pageWidth / 2) + margin - (titleWidth / 2), yPosition);
+                contentStream.showText("HAY MART");
+                contentStream.endText();
+                yPosition -= 20;
+    
+                // Address
+                contentStream.beginText();
+                contentStream.setFont(regularFont, 10);
+                String address = "Jl. Pasteur No. 123, Bandung";
+                float addressWidth = regularFont.getStringWidth(address) / 1000 * 10;
+                contentStream.newLineAtOffset((pageWidth / 2) + margin - (addressWidth / 2), yPosition);
+                contentStream.showText(address);
+                contentStream.endText();
+                yPosition -= 30;
+    
+                // Transaction Info
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                String formattedDate = pemesanan.getTanggalPembelian().format(formatter);
+    
+                contentStream.beginText();
+                contentStream.setFont(regularFont, 10);
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("No. Transaksi: " + pemesananId);
+                contentStream.endText();
+                yPosition -= 15;
+    
+                contentStream.beginText();
+                contentStream.setFont(regularFont, 10);
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Tanggal: " + formattedDate);
+                contentStream.endText();
+                yPosition -= 15;
+    
+                contentStream.beginText();
+                contentStream.setFont(regularFont, 10);
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Kasir: " + pemesanan.getUserKasir().getNama());
+                contentStream.endText();
+                yPosition -= 25;
+    
+                // Separator
+                contentStream.setLineWidth(1f);
+                contentStream.moveTo(margin, yPosition);
+                contentStream.lineTo(pageWidth + margin, yPosition);
+                contentStream.stroke();
+                yPosition -= 15;
+    
+                // Table header
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 10);
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("Produk");
+                contentStream.endText();
+    
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 10);
+                contentStream.newLineAtOffset(margin + (pageWidth * 0.5f), yPosition);
+                contentStream.showText("Qty");
+                contentStream.endText();
+    
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 10);
+                contentStream.newLineAtOffset(margin + (pageWidth * 0.65f), yPosition);
+                contentStream.showText("Harga");
+                contentStream.endText();
+    
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 10);
+                contentStream.newLineAtOffset(margin + (pageWidth * 0.85f), yPosition);
+                contentStream.showText("Subtotal");
+                contentStream.endText();
+    
+                yPosition -= 15;
+    
+                // Items loop
+                for (DetailPemesanan detail : pemesanan.getDetails()) {
+                    // Ganti halaman jika penuh
+                    if (yPosition < 100) {
+                        contentStream.close();
+                        page = new PDPage(PDRectangle.A4);
+                        document.addPage(page);
+                        contentStream = new PDPageContentStream(document, page);
+                        yPosition = yStart;
+                    }
+    
+                    contentStream.beginText();
+                    contentStream.setFont(regularFont, 10);
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText(detail.getProduk().getNama());
+                    contentStream.endText();
+    
+                    contentStream.beginText();
+                    contentStream.setFont(regularFont, 10);
+                    contentStream.newLineAtOffset(margin + (pageWidth * 0.5f), yPosition);
+                    contentStream.showText(detail.getJumlah().toString());
+                    contentStream.endText();
+    
+                    String price = "Rp " + String.format("%,d", detail.getHargaSatuan()).replace(",", ".");
+                    float priceWidth = regularFont.getStringWidth(price) / 1000 * 10;
+                    contentStream.beginText();
+                    contentStream.setFont(regularFont, 10);
+                    contentStream.newLineAtOffset(margin + (pageWidth * 0.75f) - priceWidth, yPosition);
+                    contentStream.showText(price);
+                    contentStream.endText();
+    
+                    String subtotal = "Rp " + String.format("%,d", detail.getSubtotal()).replace(",", ".");;
+                    float subtotalWidth = regularFont.getStringWidth(subtotal) / 1000 * 10;
+                    contentStream.beginText();
+                    contentStream.setFont(regularFont, 10);
+                    contentStream.newLineAtOffset(margin + pageWidth - subtotalWidth, yPosition);
+                    contentStream.showText(subtotal);
+                    contentStream.endText();
+    
+                    yPosition -= 15;
+                }
+    
+                // Separator
+                contentStream.setLineWidth(1f);
+                contentStream.moveTo(margin, yPosition);
+                contentStream.lineTo(pageWidth + margin, yPosition);
+                contentStream.stroke();
+                yPosition -= 20;
+    
+                // Total
+                String total = "TOTAL: Rp " + String.format("%,d", pemesanan.getTotalHarga()).replace(",", ".");
+                float totalWidth = boldFont.getStringWidth(total) / 1000 * 12;
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 12);
+                contentStream.newLineAtOffset(margin + pageWidth - totalWidth, yPosition);
+                contentStream.showText(total);
+                contentStream.endText();
+                yPosition -= 30;
+    
+                // Footer
+                String footer = "Terima kasih atas kunjungan Anda!";
+                float footerWidth = boldFont.getStringWidth(footer) / 1000 * 10;
+                contentStream.beginText();
+                contentStream.setFont(boldFont, 10);
+                contentStream.newLineAtOffset((pageWidth / 2) + margin - (footerWidth / 2), yPosition);
+                contentStream.showText(footer);
+                contentStream.endText();
+    
+                contentStream.close();
+            } catch (IOException e) {
+                log.error("Error saat menulis PDF: ", e);
+            }
+    
+            document.save(baos);
+        } catch (IOException e) {
+            log.error("Error generating PDF: ", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating PDF: " + e.getMessage());
+        }
+    
+        return baos;
+    }
+}    

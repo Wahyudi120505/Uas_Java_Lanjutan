@@ -1,0 +1,9 @@
+<button onclick="downloadStruk(event, this)" class="btn btn-primary"></button>
+    <i class="fas fa-download"></i> Download Struk
+</button>
+
+<script>
+function downloadStruk(pemesananId) {
+    window.location.href = '/api/pemesanan/struk/' + pemesananId;
+}
+</script>

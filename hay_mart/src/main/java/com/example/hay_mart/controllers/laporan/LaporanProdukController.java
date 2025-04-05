@@ -26,7 +26,7 @@ public class LaporanProdukController {
     public ResponseEntity<GenericResponse<List<LaporanProdukResponse>>> getLaporanProduk() {
         List<LaporanProdukResponse> data= laporanProdukService.getLaporanProduk();
         try {
-            return ResponseEntity.ok().body(GenericResponse.success(data, "p"));
+            return ResponseEntity.ok().body(GenericResponse.success(data, "ALL LAPORAN PRODUK SUKSES"));
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Internal Server Error!"));

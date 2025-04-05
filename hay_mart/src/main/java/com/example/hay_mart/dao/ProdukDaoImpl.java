@@ -72,7 +72,7 @@ public class ProdukDaoImpl implements ProdukDao {
             predicates.add(criteriaBuilder.like(produkRoot.get("nama"), "%" + nama + "%"));
         }
 
-        // Filter harga (fleksibel)
+        // Filter harga 
         if (minPrice != null && maxPrice != null) {
             predicates.add(criteriaBuilder.between(produkRoot.get("harga"), minPrice, maxPrice));
         } else if (minPrice != null) {

@@ -114,7 +114,7 @@ public class ProdukServiceImpl implements ProdukService {
                     .nama(request.getNama())
                     .harga(request.getHarga())
                     .stok(request.getStok())
-                    .fotoProduk(new SerialBlob(image.getBytes()))
+                    .fotoProduk(convertImage.convertBlob(image))
                     .keterangan(request.getKeterangan())
                     .status(status)
                     .kategori(kategori)
