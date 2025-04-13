@@ -3,12 +3,17 @@ package com.example.hay_mart.controllers.kasir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.hay_mart.dto.GenericResponse;
 import com.example.hay_mart.dto.PageResponse;
+import com.example.hay_mart.dto.kasir.KasirRequest;
 import com.example.hay_mart.dto.kasir.KasirResponse;
 import com.example.hay_mart.services.kasir.KasirService;
 
@@ -35,5 +40,19 @@ public class KasirController {
             log.info("Error saat ambil data kasir: {}", e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
         }
+    }
+
+    @PostMapping("/update-status/{id}")
+    public ResponseEntity<Object> update(@PathVariable("id") int id, @RequestBody KasirRequest req){
+        try {
+            kasirService.update(id, req);
+            return ResponseEntity.ok().body(GenericResponse.success(null, "Succes Update status kasir"));
+        } catch (ResponseStatusException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
+        }
+        
     }
 }
