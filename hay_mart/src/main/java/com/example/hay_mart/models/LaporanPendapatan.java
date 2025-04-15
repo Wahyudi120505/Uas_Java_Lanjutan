@@ -2,16 +2,9 @@ package com.example.hay_mart.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.example.hay_mart.enums.TipeLaporan;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Data
@@ -24,8 +17,14 @@ public class LaporanPendapatan {
     @Column(name = "laporan_pendapatan_id", nullable = false)
     private Integer laporanPendapatanId;
 
-    private LocalDate tanggal;
+    // Untuk menyimpan rentang tanggal laporan (harian, mingguan, bulanan)
+    private LocalDate startDate;
+    private LocalDate endDate;
+    
     private BigDecimal modal;
     private BigDecimal pendapatan;
     private BigDecimal keuntungan;
+    
+    @Enumerated(EnumType.STRING)
+    private TipeLaporan tipe;
 }

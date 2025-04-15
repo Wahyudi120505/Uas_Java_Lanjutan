@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrasi Berhasil</title>
+    <title>Verifikasi Email</title>
     <style>
       body {
         font-family: "Arial", sans-serif;
@@ -31,6 +31,12 @@
         text-align: center;
         color: #2c3e50;
       }
+      .code {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2b7bff;
+        margin: 20px 0;
+      }
       .btn {
         display: inline-block;
         margin-top: 15px;
@@ -52,15 +58,15 @@
   <body>
     <div class="container">
       <div class="header">
-        <h2>Selamat Datang di HayMart</h2>
+        <h2>Verifikasi Email Anda</h2>
       </div>
       <div class="content">
         <p>Hai, <b>{{nama}}</b>!</p>
-        <p>
-          Selamat! Anda telah berhasil mendaftar sebagai <b>Kasir HayMart</b>.
-        </p>
-        <p>Silakan login dan mulai menggunakan layanan kami.</p>
-        <a href="https://haymart.com/login" class="btn">Masuk ke HayMart</a>
+        <p>Terima kasih telah mendaftar di HayMart. Silakan verifikasi email Anda dengan menggunakan kode berikut:</p>
+        <div class="code">{{code}}</div>
+        <p>Atau klik tautan berikut untuk verifikasi:</p>
+        <a href="{{verificationUrl}}" class="btn">Verifikasi Email</a>
+        <p>Kode ini berlaku selama 5 menit.</p>
       </div>
       <div class="footer">
         <p>© 2025 HayMart. Semua Hak Dilindungi.</p>

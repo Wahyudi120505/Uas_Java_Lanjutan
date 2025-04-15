@@ -3,7 +3,11 @@ package com.example.hay_mart.services.login;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import javax.sql.rowset.serial.SerialBlob;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.example.hay_mart.constant.RoleConstant;
 import com.example.hay_mart.dto.login.LoginRequest;
 import com.example.hay_mart.dto.login.LoginResponse;
@@ -79,22 +84,33 @@ public class LoginServiceImpl implements LoginService {
 
         try {
             Resource resource = new ClassPathResource("static/images/default.png");
-            byte[] imageBytes = Files.readAllBytes(resource.getFile().toPath());
+            byte[] imageBytes;
+            try {
+                imageBytes = Files.readAllBytes(resource.getFile().toPath());
+            } catch (IOException e) {
+                throw new RuntimeException("Gagal memuat gambar default", e);
+            }
+
+            String verificationCode = UUID.randomUUID().toString().substring(0, 8); 
 
             User newUser = User.builder()
                     .nama(request.getNama())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
-                    .status("active")
+                    .status("pending")
                     .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_KASIR))
                     .image(new SerialBlob(imageBytes))
+                    .verificationCode(verificationCode)
+                    .verificationCodeExpiry(LocalDateTime.now().plusMinutes(5))
+                    .isVerified(false)
                     .build();
 
             userRepository.save(newUser);
-            emailService.sendEmail(request.getEmail(), "Registrasi Anda berhasil, silakan cek email",
-                    request.getNama().toUpperCase());
+
+            emailService.sendVerificationEmail(request.getEmail(), request.getNama(), verificationCode);
+
             return null;
-        } catch (IOException | SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Gagal memproses gambar default: " + e.getMessage());
         }
     }

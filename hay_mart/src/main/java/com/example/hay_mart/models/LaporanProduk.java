@@ -29,6 +29,7 @@ public class LaporanProduk {
 
     private String namaProduk;
     private Integer jumlahTerjual;
+    private Integer stok;
     private Integer hargaSatuan;
     private Integer total;
 }

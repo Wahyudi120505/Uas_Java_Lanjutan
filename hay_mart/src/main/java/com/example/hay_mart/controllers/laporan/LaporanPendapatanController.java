@@ -2,11 +2,10 @@ package com.example.hay_mart.controllers.laporan;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.example.hay_mart.dto.GenericResponse;
 import com.example.hay_mart.dto.laporan.LaporanPendapatanResponse;
+import com.example.hay_mart.enums.TipeLaporan;
 import com.example.hay_mart.services.laporan.LaporanPendapatanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +21,11 @@ public class LaporanPendapatanController {
     @GetMapping("/laporan-pendapatan-harian")
     public ResponseEntity<GenericResponse<List<LaporanPendapatanResponse>>> getLaporanPendapatanHarian() {
         try {
-            laporanPendapatanService.generateLaporanHarian(); 
-            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan();
-            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data"));
+            laporanPendapatanService.generateLaporanHarian();
+            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan(TipeLaporan.HARIAN);
+            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data harian"));
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Internal Server Error!"));
         }
     }
@@ -35,10 +34,10 @@ public class LaporanPendapatanController {
     public ResponseEntity<GenericResponse<List<LaporanPendapatanResponse>>> getLaporanPendapatanMingguan() {
         try {
             laporanPendapatanService.generateLaporanMingguan();
-            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan();
-            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data"));
+            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan(TipeLaporan.MINGGUAN);
+            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data mingguan"));
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Internal Server Error!"));
         }
     }
@@ -47,12 +46,11 @@ public class LaporanPendapatanController {
     public ResponseEntity<GenericResponse<List<LaporanPendapatanResponse>>> getLaporanPendapatanBulanan() {
         try {
             laporanPendapatanService.generateLaporanBulanan();
-            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan();
-            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data"));
+            List<LaporanPendapatanResponse> data = laporanPendapatanService.getLaporanPendapatan(TipeLaporan.BULANAN);
+            return ResponseEntity.ok().body(GenericResponse.success(data, "Berhasil ambil data bulanan"));
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Internal Server Error!"));
         }
     }
-
 }

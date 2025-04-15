@@ -20,6 +20,7 @@ public class LaporanProdukServiceImpl implements LaporanProdukService {
                 .map(laporan -> LaporanProdukResponse.builder()
                         .namaProduk(laporan.getNamaProduk())
                         .jumlahTerjual(laporan.getJumlahTerjual())
+                        .stok(laporan.getStok())
                         .hargaSatuan(laporan.getHargaSatuan())
                         .total(laporan.getTotal())
                         .build())

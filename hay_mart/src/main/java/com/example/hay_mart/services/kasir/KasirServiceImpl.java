@@ -2,6 +2,7 @@ package com.example.hay_mart.services.kasir;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.hay_mart.dao.UserDao;
 import com.example.hay_mart.dto.PageResponse;
-import com.example.hay_mart.dto.kasir.KasirRequest;
 import com.example.hay_mart.dto.kasir.KasirResponse;
+import com.example.hay_mart.dto.kasir.KasirUpdateSatatusRequest;
+import com.example.hay_mart.dto.pemesanan.DetailPemesananResponse;
+import com.example.hay_mart.dto.pemesanan.PemesananResponse;
+import com.example.hay_mart.models.DetailPemesanan;
+import com.example.hay_mart.models.Pemesanan;
 import com.example.hay_mart.models.User;
+import com.example.hay_mart.repositorys.PemesananRepository;
 import com.example.hay_mart.repositorys.UserRepository;
 import com.example.hay_mart.services.image.ConvertImageService;
 
@@ -28,7 +34,10 @@ public class KasirServiceImpl implements KasirService {
     ConvertImageService convertImage;
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
+
+    @Autowired
+    PemesananRepository pemesananRepository;
 
     @Override
     public PageResponse<KasirResponse> getAllKasir(String nama, int page, int size, String sortBy, String sortOrder) {
@@ -57,20 +66,40 @@ public class KasirServiceImpl implements KasirService {
     }
 
     @Override
-    public void update(int id, KasirRequest req) {
-        try {
-            User user = userRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Kasir dengan id : " + id + " tidak ditemukan"));
-
-            if (user == null){
-                throw new RuntimeException("Kasir tidak ditemukan");
-            }
-
-            user.setStatus(req.getStatus());
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new RuntimeException("Gagal mengupdate status: " + e.getMessage());
-        }
+    public void update(int id, KasirUpdateSatatusRequest req) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Kasir dengan id: " + id + " tidak ditemukan"));
+    
+        user.setStatus(req.getStatus());
+        userRepository.save(user);
     }
 
+    @Override
+    public List<PemesananResponse> getAllHistorysKasir() {
+        List<Pemesanan> riwayat = pemesananRepository.findAll();
+        List<PemesananResponse> responseList = new ArrayList<>();
+    
+        for (Pemesanan pemesanan : riwayat) {
+            List<DetailPemesananResponse> detailList = new ArrayList<>();
+    
+            for (DetailPemesanan detail : pemesanan.getDetails()) {
+                detailList.add(DetailPemesananResponse.builder()
+                        .namaProduk(detail.getProduk().getNama())
+                        .jumlah(detail.getJumlah())
+                        .hargaSatuan(detail.getHargaSatuan())
+                        .subtotal(detail.getSubtotal())
+                        .build());
+            }
+    
+            responseList.add(PemesananResponse.builder()
+                    .namaKasir(pemesanan.getUserKasir().getNama()) // ambil dari objek pemesanan
+                    .tanggalPembelian(pemesanan.getTanggalPembelian())
+                    .totalHarga(pemesanan.getTotalHarga())
+                    .items(detailList)
+                    .build());
+        }
+    
+        return responseList;
+    }
+    
 }

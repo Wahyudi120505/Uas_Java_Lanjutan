@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class LaporanProdukResponse {
     private String namaProduk;
     private Integer jumlahTerjual;
+    private Integer stok;
     private Integer hargaSatuan;
     private Integer total;
 }

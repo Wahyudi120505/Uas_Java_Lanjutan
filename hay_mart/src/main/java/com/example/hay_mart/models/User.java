@@ -1,6 +1,8 @@
 package com.example.hay_mart.models;
 
 import java.sql.Blob;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,11 @@ public class User {
 
     @Lob
     private Blob image;
+
+    
+    private String verificationCode; 
+    private LocalDateTime verificationCodeExpiry;
+    private Boolean isVerified;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)

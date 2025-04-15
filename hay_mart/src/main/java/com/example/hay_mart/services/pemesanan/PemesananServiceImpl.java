@@ -128,6 +128,7 @@ public class PemesananServiceImpl implements PemesananService {
                         .produk(produk)
                         .namaProduk(produk.getNama())
                         .jumlahTerjual(jumlah)
+                        .stok(produk.getStok())
                         .hargaSatuan(hargaSatuan)
                         .total(subtotal)
                         .build();
