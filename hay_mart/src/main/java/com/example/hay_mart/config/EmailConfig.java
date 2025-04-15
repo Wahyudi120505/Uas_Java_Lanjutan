@@ -1,7 +1,6 @@
 package com.example.hay_mart.config;
 
 import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,13 +35,13 @@ public class EmailConfig {
 
     @Bean
     public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();       //informasi email
-        mailSender.setHost(mailHost);               
-        mailSender.setPort(mailPort); 
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl(); // informasi email
+        mailSender.setHost(mailHost);
+        mailSender.setPort(mailPort);
         mailSender.setUsername(mailUsername);
         mailSender.setPassword(mailPassword);
 
-        Properties props = mailSender.getJavaMailProperties();   //server untuk send email
+        Properties props = mailSender.getJavaMailProperties(); // server untuk send email
         props.put("mail.transport.protocol", mailProtocol);
         props.put("mail.smtp.auth", mailAuth);
         props.put("mail.smtp.starttls.enable", mailStarttls);
@@ -50,5 +49,4 @@ public class EmailConfig {
 
         return mailSender;
     }
-
 }

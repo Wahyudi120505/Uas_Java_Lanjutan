@@ -6,5 +6,6 @@ import com.example.hay_mart.dto.login.RegisRequest;
 
 public interface LoginService {
     LoginResponse login(LoginRequest request);
+
     String register(RegisRequest request);
 }

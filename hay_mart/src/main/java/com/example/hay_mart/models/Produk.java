@@ -31,6 +31,7 @@ public class Produk {
     private Integer stok;
     private String keterangan;
     private String status;
+
     @Lob
     private Blob fotoProduk;
 

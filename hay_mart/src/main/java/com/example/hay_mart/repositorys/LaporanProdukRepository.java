@@ -1,9 +1,7 @@
 package com.example.hay_mart.repositorys;
 
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.example.hay_mart.models.LaporanProduk;
 import com.example.hay_mart.models.Produk;
 

@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.example.hay_mart.constant.RoleConstant;
 import com.example.hay_mart.filter.JwtFilter;
 
@@ -28,14 +27,14 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
         this.userDetailsService = userDetailsService;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
@@ -45,9 +44,9 @@ public class SecurityConfig {
         .cors(cors -> cors.configure(http))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**", "/produk/get-produk-page", "produk/get-all-produks").permitAll()
-            .requestMatchers("/produk/**", "/laporan/**", "/kasir/**").hasAuthority(RoleConstant.ROLE_ADMIN)
-            .requestMatchers("/pemesanan/**").hasAuthority(RoleConstant.ROLE_KASIR)
+            .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**").permitAll()
+            .requestMatchers("/produk/**", "/laporan/**").hasAuthority(RoleConstant.ROLE_ADMIN)
+            .requestMatchers("/pemesanan/**").hasAuthority("KASIR")
             .anyRequest().authenticated()
         )
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -56,7 +55,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
