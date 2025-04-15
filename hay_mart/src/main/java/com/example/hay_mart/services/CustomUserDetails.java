@@ -2,11 +2,9 @@ package com.example.hay_mart.services;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import com.example.hay_mart.models.User;
 
 public class CustomUserDetails implements UserDetails {

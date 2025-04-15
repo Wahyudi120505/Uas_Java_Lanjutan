@@ -16,10 +16,10 @@ public class PageResponse<T> {
 
     public static <T> PageResponse<T> success(List<T> items, int page, int size, long totalItem) {
         return PageResponse.<T>builder()
-            .page(page)
-            .size(size)
-            .totalItem(totalItem)
-            .items(items)
-            .build();    
+                .page(page)
+                .size(size)
+                .totalItem(totalItem)
+                .items(items)
+                .build();
     }
 }

@@ -15,7 +15,7 @@ import com.example.hay_mart.repositorys.RoleRepository;
 import com.example.hay_mart.repositorys.UserRepository;
 
 @Component
-public class InitialDataLoader implements ApplicationRunner{
+public class InitialDataLoader implements ApplicationRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -29,22 +29,22 @@ public class InitialDataLoader implements ApplicationRunner{
     private KategoriRepository kategoriRepository;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception{
+    public void run(ApplicationArguments args) throws Exception {
         if (roleRepository.findAll().isEmpty()) {
             Role admin = new Role(null, RoleConstant.ROLE_ADMIN);
             Role kasir = new Role(null, RoleConstant.ROLE_KASIR);
-            roleRepository.saveAll(List.of(admin,kasir));
+            roleRepository.saveAll(List.of(admin, kasir));
         }
 
         if (akunRepository.findAll().isEmpty()) {
             User admin = User.builder()
-                .userId(null)
-                .email("admin123@gmail.com")
-                .nama("ADMIN")
-                .password(passwordEncoder.encode("ADMIN"))
-                .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
-                .status("active")
-                .build();
+                    .userId(null)
+                    .email("admin123@gmail.com")
+                    .nama("ADMIN")
+                    .password(passwordEncoder.encode("ADMIN"))
+                    .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_ADMIN))
+                    .status("active")
+                    .build();
             akunRepository.save(admin);
         }
 
@@ -55,7 +55,7 @@ public class InitialDataLoader implements ApplicationRunner{
             Kategori aksesoris = new Kategori(null, "Aksesoris");
             Kategori elektronik = new Kategori(null, "Elektronik");
             Kategori obatan = new Kategori(null, "Obat-obatan");
-            kategoriRepository.saveAll(List.of(makanan,minuman,kecantikan,aksesoris,elektronik,obatan));
+            kategoriRepository.saveAll(List.of(makanan, minuman, kecantikan, aksesoris, elektronik, obatan));
         }
     }
 }

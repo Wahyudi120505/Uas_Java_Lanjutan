@@ -2,14 +2,11 @@ package com.example.hay_mart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.models.Kategori;
 import com.example.hay_mart.models.Produk;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -24,8 +21,8 @@ public class ProdukDaoImpl implements ProdukDao {
 
     @Override
     public PageResponse<Produk> getAll(String nama, Kategori kategori, int page, int size,
-                                       String sortBy, String sortOrder,
-                                       Integer minPrice, Integer maxPrice) {
+            String sortBy, String sortOrder,
+            Integer minPrice, Integer maxPrice) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Produk> criteriaQuery = criteriaBuilder.createQuery(Produk.class);
@@ -62,8 +59,8 @@ public class ProdukDaoImpl implements ProdukDao {
     }
 
     private Predicate[] createPredicates(CriteriaBuilder criteriaBuilder, Root<Produk> produkRoot,
-                                         String nama, Kategori kategori,
-                                         Integer minPrice, Integer maxPrice) {
+            String nama, Kategori kategori,
+            Integer minPrice, Integer maxPrice) {
 
         List<Predicate> predicates = new ArrayList<>();
 

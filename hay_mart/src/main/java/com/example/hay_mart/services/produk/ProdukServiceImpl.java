@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.sql.rowset.serial.SerialBlob;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,12 +40,11 @@ public class ProdukServiceImpl implements ProdukService {
     @Autowired
     ConvertImageService convertImage;
 
-
     @Override
     public Integer getProduksPage() {
         return (int) Math.ceil((double) produkRepository.count() / 10);
     }
-    
+
     @Override
     public void create(ProdukRequest request, MultipartFile image) {
         try {
@@ -55,12 +52,12 @@ public class ProdukServiceImpl implements ProdukService {
             produkRepository.save(produk);
 
             LaporanProduk laporan = LaporanProduk.builder()
-                        .produk(produk)
-                        .namaProduk(produk.getNama())
-                        .jumlahTerjual(0)
-                        .hargaSatuan(produk.getHarga())
-                        .total(0)
-                        .build();
+                    .produk(produk)
+                    .namaProduk(produk.getNama())
+                    .jumlahTerjual(0)
+                    .hargaSatuan(produk.getHarga())
+                    .total(0)
+                    .build();
             laporanProdukRepository.save(laporan);
         } catch (Exception e) {
             log.error("Error creating product: {}", e.getMessage());
@@ -69,16 +66,19 @@ public class ProdukServiceImpl implements ProdukService {
     }
 
     @Override
-    public PageResponse<ProdukResponse> getAllProduks(String nama, String kategori, int page, int size, String sortBy, String sortOrder,
-                                                      Integer minPrice, Integer maxPrice) {
+    public PageResponse<ProdukResponse> getAllProduks(String nama, String kategori, int page, int size, String sortBy,
+            String sortOrder,
+            Integer minPrice, Integer maxPrice) {
         Kategori namaKategori = kategoriRepository.findKategoriByNama(kategori);
-        PageResponse<Produk> produkPage = produkDao.getAll(nama, namaKategori, page, size, sortBy, sortOrder, minPrice, maxPrice);
+        PageResponse<Produk> produkPage = produkDao.getAll(nama, namaKategori, page, size, sortBy, sortOrder, minPrice,
+                maxPrice);
 
         List<ProdukResponse> produkResponses = produkPage.getItems().stream()
                 .map(this::toProdukResponse)
                 .collect(Collectors.toList());
 
-        return PageResponse.success(produkResponses, produkPage.getPage(), produkPage.getSize(), produkPage.getTotalItem());
+        return PageResponse.success(produkResponses, produkPage.getPage(), produkPage.getSize(),
+                produkPage.getTotalItem());
     }
 
     private ProdukResponse toProdukResponse(Produk produk) {

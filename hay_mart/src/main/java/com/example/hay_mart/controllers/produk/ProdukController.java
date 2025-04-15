@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.example.hay_mart.dto.GenericResponse;
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.dto.produk.ProdukRequest;
@@ -43,7 +42,8 @@ public class ProdukController {
     @GetMapping("/get-produk-page")
     public ResponseEntity<Object> getProdukPagEntity() {
         try {
-            return ResponseEntity.ok().body(GenericResponse.success(produkService.getProduksPage(), "many pages at the moment"));
+            return ResponseEntity.ok()
+                    .body(GenericResponse.success(produkService.getProduksPage(), "many pages at the moment"));
         } catch (Exception e) {
             log.info(e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
@@ -59,7 +59,8 @@ public class ProdukController {
             @RequestParam(required = false) Integer minPrice,
             @RequestParam(required = false) Integer maxPrice) {
         try {
-            PageResponse<ProdukResponse> response = produkService.getAllProduks(nama, kategori, page, 10, sortBy, sortOrder,
+            PageResponse<ProdukResponse> response = produkService.getAllProduks(nama, kategori, page, 10, sortBy,
+                    sortOrder,
                     minPrice, maxPrice);
             return ResponseEntity.ok().body(GenericResponse.success(response, "Success Get All Product"));
         } catch (Exception e) {
