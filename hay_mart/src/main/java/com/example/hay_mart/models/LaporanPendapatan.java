@@ -17,9 +17,7 @@ public class LaporanPendapatan {
     @Column(name = "laporan_pendapatan_id", nullable = false)
     private Integer laporanPendapatanId;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    
+    private LocalDate tanggal;
     private BigDecimal modal;
     private BigDecimal pendapatan;
     private BigDecimal keuntungan;
