@@ -17,7 +17,6 @@ public class LaporanPendapatan {
     @Column(name = "laporan_pendapatan_id", nullable = false)
     private Integer laporanPendapatanId;
 
-    // Untuk menyimpan rentang tanggal laporan (harian, mingguan, bulanan)
     private LocalDate startDate;
     private LocalDate endDate;
     
