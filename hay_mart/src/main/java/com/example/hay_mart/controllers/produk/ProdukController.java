@@ -70,7 +70,7 @@ public class ProdukController {
     }
 
     @PostMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> update(@PathVariable(value = "id") int id,
+    public ResponseEntity<Object> update(@PathVariable int id,
             ProdukRequest uproduk, @RequestParam("Product Image") MultipartFile file) {
 
         try {

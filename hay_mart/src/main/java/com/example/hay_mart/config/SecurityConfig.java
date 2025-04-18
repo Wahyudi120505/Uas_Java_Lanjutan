@@ -45,8 +45,8 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**").permitAll()
-            .requestMatchers("/produk/**", "/laporan/**", "/kasir/**").hasAuthority(RoleConstant.ROLE_ADMIN)
-            .requestMatchers("/pemesanan/**").hasAuthority("KASIR")
+            .requestMatchers("/produk/**", "/laporan/**", "/kasir/get-all-kasir", "/kasir/update-status/**", "/kasir/history-all-kasir").hasAuthority(RoleConstant.ROLE_ADMIN)
+            .requestMatchers("/pemesanan/**", "/kasir/edit-kasir/**").hasAuthority("KASIR")
             .anyRequest().authenticated()
         )
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

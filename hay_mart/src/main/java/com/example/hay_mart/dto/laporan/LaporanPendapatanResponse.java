@@ -6,12 +6,13 @@ import lombok.*;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class LaporanPendapatanResponse {
     private LocalDate startDate;
-    private LocalDate endDate;
-    private BigDecimal modal;
+    private LocalDate endDate; 
     private BigDecimal pendapatan;
+    private BigDecimal modal;
     private BigDecimal keuntungan;
+    private String tipe; 
 }

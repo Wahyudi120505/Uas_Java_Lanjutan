@@ -18,6 +18,9 @@ public class LaporanPendapatan {
     private Integer laporanPendapatanId;
 
     private LocalDate tanggal;
+    
+    private LocalDate tanggalAkhir;
+    
     private BigDecimal modal;
     private BigDecimal pendapatan;
     private BigDecimal keuntungan;

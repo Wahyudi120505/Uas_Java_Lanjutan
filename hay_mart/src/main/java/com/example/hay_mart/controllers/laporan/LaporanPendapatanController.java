@@ -60,12 +60,9 @@ public class LaporanPendapatanController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("Error generating report: ", e);
             return ResponseEntity.internalServerError()
-                    .body(GenericResponse.builder()
-                            .success(false)
-                            .message("Internal Server Error")
-                            .data(null)
-                            .build());
+                    .body(GenericResponse.error("Terjadi kesalahan server: " + e.getMessage()));
         }
     }
 }

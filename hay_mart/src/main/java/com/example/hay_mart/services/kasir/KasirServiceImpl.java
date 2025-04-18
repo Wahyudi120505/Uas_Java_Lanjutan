@@ -6,11 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import javax.sql.rowset.serial.SerialBlob;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.example.hay_mart.constant.RoleConstant;
 import com.example.hay_mart.dao.UserDao;
 import com.example.hay_mart.dto.PageResponse;
+import com.example.hay_mart.dto.kasir.EditKasirRequest;
 import com.example.hay_mart.dto.kasir.KasirResponse;
 import com.example.hay_mart.dto.kasir.KasirUpdateSatatusRequest;
 import com.example.hay_mart.dto.pemesanan.DetailPemesananResponse;
@@ -69,7 +76,7 @@ public class KasirServiceImpl implements KasirService {
     public void update(int id, KasirUpdateSatatusRequest req) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Kasir dengan id: " + id + " tidak ditemukan"));
-    
+
         user.setStatus(req.getStatus());
         userRepository.save(user);
     }
@@ -78,10 +85,10 @@ public class KasirServiceImpl implements KasirService {
     public List<PemesananResponse> getAllHistorysKasir() {
         List<Pemesanan> riwayat = pemesananRepository.findAll();
         List<PemesananResponse> responseList = new ArrayList<>();
-    
+
         for (Pemesanan pemesanan : riwayat) {
             List<DetailPemesananResponse> detailList = new ArrayList<>();
-    
+
             for (DetailPemesanan detail : pemesanan.getDetails()) {
                 detailList.add(DetailPemesananResponse.builder()
                         .namaProduk(detail.getProduk().getNama())
@@ -90,7 +97,7 @@ public class KasirServiceImpl implements KasirService {
                         .subtotal(detail.getSubtotal())
                         .build());
             }
-    
+
             responseList.add(PemesananResponse.builder()
                     .namaKasir(pemesanan.getUserKasir().getNama()) // ambil dari objek pemesanan
                     .tanggalPembelian(pemesanan.getTanggalPembelian())
@@ -98,8 +105,31 @@ public class KasirServiceImpl implements KasirService {
                     .items(detailList)
                     .build());
         }
-    
+
         return responseList;
     }
+
+    @Override
+    public void editKasir(int id, EditKasirRequest req, MultipartFile image) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
     
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+    
+        if (currentUser.getUserId() != id && !currentUser.getRole().getRoleName().equals(RoleConstant.ROLE_KASIR)) {
+            throw new RuntimeException("Akses ditolak: kamu tidak bisa edit user lain.");
+        }
+    
+        currentUser.setNama(req.getNama());
+        currentUser.setEmail(req.getEmail());
+    
+        try {
+            currentUser.setImage(new SerialBlob(image.getBytes()));
+        } catch (IOException | SQLException e) {
+            throw new RuntimeException("Gagal menyimpan gambar kasir", e);
+        }
+    
+        userRepository.save(currentUser);
+    }    
 }
