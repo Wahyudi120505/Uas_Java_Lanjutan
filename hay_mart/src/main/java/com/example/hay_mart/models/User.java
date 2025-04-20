@@ -35,7 +35,6 @@ public class User {
     @Lob
     private Blob image;
 
-    
     private String verificationCode; 
     private LocalDateTime verificationCodeExpiry;
     private Boolean isVerified;
