@@ -3,6 +3,7 @@ package com.example.hay_mart.services.login;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -58,11 +59,12 @@ public class LoginServiceImpl implements LoginService {
             throw new RuntimeException("Email Atau Password Salah");
         }
 
-        if (RoleConstant.ROLE_KASIR.equalsIgnoreCase(user.getRole().getRoleName())
-                && !"active".equalsIgnoreCase(user.getStatus())) {
-            throw new RuntimeException("Kasir tidak dapat login karena statusnya sudah tidak aktif");
+        if (RoleConstant.ROLE_KASIR.equalsIgnoreCase(user.getRole().getRoleName())) {
+            if (!"active".equalsIgnoreCase(user.getStatus()) || !Boolean.TRUE.equals(user.getIsVerified())) {
+                throw new RuntimeException("Kasir tidak dapat login karena statusnya belum aktif atau belum diverifikasi");
+            }
         }
-
+        
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -72,6 +74,7 @@ public class LoginServiceImpl implements LoginService {
 
         CustomUserDetails userDetails = new CustomUserDetails(user);
         String token = jwtUtil.generateToken(userDetails);
+
         return new LoginResponse(token, user.getRole().getRoleName(), user.getNama());
     }
 
@@ -91,7 +94,7 @@ public class LoginServiceImpl implements LoginService {
                 throw new RuntimeException("Gagal memuat gambar default", e);
             }
 
-            String verificationCode = UUID.randomUUID().toString().substring(0, 8); 
+            String verificationCode = UUID.randomUUID().toString().substring(0, 8);
 
             User newUser = User.builder()
                     .nama(request.getNama())
@@ -100,6 +103,7 @@ public class LoginServiceImpl implements LoginService {
                     .status("pending")
                     .role(roleRepository.findRoleByRoleName(RoleConstant.ROLE_KASIR))
                     .image(new SerialBlob(imageBytes))
+                    .starDate(LocalDate.now())
                     .verificationCode(verificationCode)
                     .verificationCodeExpiry(LocalDateTime.now().plusMinutes(5))
                     .isVerified(false)

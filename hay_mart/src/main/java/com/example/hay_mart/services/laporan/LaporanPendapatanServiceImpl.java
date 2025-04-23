@@ -218,7 +218,7 @@ public class LaporanPendapatanServiceImpl implements LaporanPendapatanService {
         CellStyle headerStyle = createHeaderStyle(workbook);
         CellStyle titleStyle = createTitleStyle(workbook);
         CellStyle dateStyle = createDateStyle(workbook);
-        CellStyle numberStyle = createNumberStyle(workbook);
+        // CellStyle numberStyle = createNumberStyle(workbook);
         CellStyle currencyStyle = createCurrencyStyle(workbook);
         CellStyle totalStyle = createTotalStyle(workbook);
 
@@ -394,16 +394,16 @@ public class LaporanPendapatanServiceImpl implements LaporanPendapatanService {
         return style;
     }
 
-    private CellStyle createNumberStyle(Workbook workbook) {
-        CellStyle style = workbook.createCellStyle();
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-        style.setAlignment(HorizontalAlignment.CENTER);
+    // private CellStyle createNumberStyle(Workbook workbook) {
+    //     CellStyle style = workbook.createCellStyle();
+    //     style.setBorderBottom(BorderStyle.THIN);
+    //     style.setBorderTop(BorderStyle.THIN);
+    //     style.setBorderLeft(BorderStyle.THIN);
+    //     style.setBorderRight(BorderStyle.THIN);
+    //     style.setAlignment(HorizontalAlignment.CENTER);
 
-        return style;
-    }
+    //     return style;
+    // }
 
     private CellStyle createCurrencyStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();

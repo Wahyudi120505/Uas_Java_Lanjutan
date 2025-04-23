@@ -48,6 +48,7 @@ public class ProdukServiceImpl implements ProdukService {
     @Override
     public void create(ProdukRequest request, MultipartFile image) {
         try {
+            System.out.println("PRODUK : " + request.getNama());
             Produk produk = toProduk(request, image);
             produkRepository.save(produk);
 
@@ -100,6 +101,10 @@ public class ProdukServiceImpl implements ProdukService {
 
     private Produk toProduk(ProdukRequest request, MultipartFile image) {
         try {
+            if (request.getKategori() == null || request.getKategori().isBlank()) {
+                throw new RuntimeException("Kategori tidak boleh kosong! " + request.getNama());
+            }
+
             Kategori kategori = kategoriRepository.findKategoriByNama(request.getKategori());
             if (kategori == null) {
                 throw new RuntimeException("Kategori tidak ditemukan: " + request.getKategori());
@@ -131,6 +136,9 @@ public class ProdukServiceImpl implements ProdukService {
             Produk produk = produkRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Produk dengan id " + id + " tidak ditemukan"));
 
+            if (uproduk.getKategori() == null || uproduk.getKategori().isBlank()) {
+                throw new RuntimeException("Kategori tidak boleh kosong! " + uproduk.getNama());
+            }
             Kategori kategori = kategoriRepository.findKategoriByNama(uproduk.getKategori());
             if (kategori == null) {
                 throw new RuntimeException("Kategori tidak ditemukan: " + uproduk.getKategori());
@@ -156,5 +164,13 @@ public class ProdukServiceImpl implements ProdukService {
             log.error("Error updating product: {}", e.getMessage());
             throw new RuntimeException("Gagal memperbarui produk: " + e.getMessage());
         }
+    }
+
+    public void softDeleteProduk(int id) {
+        Produk produk = produkRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
+
+        produk.setDeleted(true); // flag sebagai dihapus
+        produkRepository.save(produk);
     }
 }

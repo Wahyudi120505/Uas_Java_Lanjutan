@@ -14,4 +14,6 @@ public interface ProdukService {
     void create(ProdukRequest pRequest, MultipartFile image);
 
     void update(int id, ProdukRequest uproduk, MultipartFile image);
+
+    void softDeleteProduk(int id);
 }

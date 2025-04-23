@@ -10,7 +10,6 @@ import com.example.hay_mart.dto.login.ForgotPWRequest;
 import com.example.hay_mart.dto.login.LoginRequest;
 import com.example.hay_mart.dto.login.RegisRequest;
 import com.example.hay_mart.dto.login.ResetPWRequest;
-import com.example.hay_mart.repositorys.UserRepository;
 import com.example.hay_mart.services.email.EmailService;
 import com.example.hay_mart.services.login.ForgotPWService;
 import com.example.hay_mart.services.login.LoginService;
@@ -23,26 +22,24 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 
     @Autowired
-    LoginService loginService;
+    private LoginService loginService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    ForgotPWService forgotPWService;
-
-    @Autowired
-    UserRepository userRepository;
+    private ForgotPWService forgotPWService;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest request) {
         try {
-            return ResponseEntity.ok().body(GenericResponse.success(loginService.login(request), "Successfully login"));
+            var data = loginService.login(request);
+            return ResponseEntity.ok().body(GenericResponse.success(data, "Login berhasil"));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.info("Login gagal: {}", e.getMessage());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
-            log.error("Error saat login", e);
+            log.error("Error saat login: {}", e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan saat login"));
         }
     }
@@ -50,15 +47,13 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegisRequest request) {
         try {
-            return ResponseEntity.ok().body(GenericResponse.success(
-                loginService.register(request),
-                "Registrasi berhasil. Silakan periksa email Anda untuk verifikasi."
-            ));
+            var data = loginService.register(request);
+            return ResponseEntity.ok().body(GenericResponse.success(data, "Silakan periksa email Anda untuk verifikasi."));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.info("Registrasi gagal: {}", e.getMessage());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
-            log.error("Error saat registrasi", e);
+            log.error("Error saat registrasi: {}", e.getMessage());
             return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan saat registrasi"));
         }
     }
@@ -67,13 +62,13 @@ public class AuthController {
     public ResponseEntity<Object> verifyUser(@RequestParam String email, @RequestParam String code) {
         try {
             emailService.verifyEmail(email, code);
-            return ResponseEntity.ok(GenericResponse.success(null, "Email Anda berhasil diverifikasi. Sekarang Anda bisa login."));
+            return ResponseEntity.ok(GenericResponse.success(null, "Email berhasil diverifikasi. Silakan login."));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.info("Verifikasi gagal: {}", e.getMessage());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
-            log.error("Error saat verifikasi email", e);
-            return ResponseEntity.badRequest().body(GenericResponse.error("Kode verifikasi salah atau sudah kadaluarsa."));
+            log.error("Error saat verifikasi email: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(GenericResponse.error(e.getMessage()));
         }
     }
 
@@ -81,10 +76,10 @@ public class AuthController {
     public ResponseEntity<Object> forgotPassword(@RequestBody ForgotPWRequest request) {
         try {
             forgotPWService.sendtoEmail(request);
-            return ResponseEntity.ok(GenericResponse.success(null, "Kode OTP akan segera dikirim melalui email Anda"));
+            return ResponseEntity.ok(GenericResponse.success(null, "Kode OTP berhasil dikirim ke email Anda."));
         } catch (Exception e) {
-            log.error("Error saat mengirim OTP", e);
-            return ResponseEntity.internalServerError().body(GenericResponse.error("Gagal mengirim kode OTP ke email"));
+            log.error("Error saat mengirim OTP: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body(GenericResponse.error("Gagal mengirim kode OTP ke email."));
         }
     }
 
@@ -92,13 +87,13 @@ public class AuthController {
     public ResponseEntity<Object> resetPassword(@RequestBody ResetPWRequest request) {
         try {
             forgotPWService.resetPassword(request);
-            return ResponseEntity.ok(GenericResponse.success(null, "Password berhasil diubah"));
+            return ResponseEntity.ok(GenericResponse.success(null, "Password berhasil diubah."));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.info("Reset password gagal: {}", e.getMessage());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
-            log.error("Error saat reset password", e);
-            return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan saat mereset password"));
+            log.error("Error saat reset password: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan saat mereset password."));
         }
     }
 }

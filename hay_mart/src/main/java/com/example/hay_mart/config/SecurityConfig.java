@@ -8,12 +8,15 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.example.hay_mart.constant.RoleConstant;
+import com.example.hay_mart.exeption.CustomAccessDeniedException;
+import com.example.hay_mart.exeption.CustomUnAuthorizeException;
 import com.example.hay_mart.filter.JwtFilter;
 
 @Configuration
@@ -43,6 +46,10 @@ public class SecurityConfig {
         http
         .cors(cors -> cors.configure(http))
         .csrf(csrf -> csrf.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new CustomUnAuthorizeException())
+                        .accessDeniedHandler(new CustomAccessDeniedException()))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/**").permitAll()
             .requestMatchers("/produk/**", "/laporan/**", "/kasir/get-all-kasir", "/kasir/update-status/**", "/kasir/history-all-kasir").hasAuthority(RoleConstant.ROLE_ADMIN)

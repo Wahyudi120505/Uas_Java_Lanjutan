@@ -1,6 +1,7 @@
 package com.example.hay_mart.models;
 
 import java.sql.Blob;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -35,11 +36,15 @@ public class User {
     @Lob
     private Blob image;
 
-    private String verificationCode; 
+    private LocalDate starDate;
+    private String verificationCode;
     private LocalDateTime verificationCodeExpiry;
+
     private Boolean isVerified;
 
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false)
     private Role role;
+    
+
 }

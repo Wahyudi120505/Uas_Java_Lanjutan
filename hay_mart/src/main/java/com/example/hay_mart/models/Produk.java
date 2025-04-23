@@ -45,4 +45,7 @@ public class Produk {
             this.status = (this.stok != null && this.stok > 0) ? "Tersedia" : "Tidak Tersedia";
         }
     }
+
+    @Builder.Default
+    private Boolean deleted = false;
 }

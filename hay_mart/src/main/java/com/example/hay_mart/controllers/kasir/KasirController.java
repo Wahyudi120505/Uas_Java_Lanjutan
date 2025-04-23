@@ -3,17 +3,9 @@ package com.example.hay_mart.controllers.kasir;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,6 +17,7 @@ import com.example.hay_mart.dto.kasir.KasirUpdateSatatusRequest;
 import com.example.hay_mart.dto.pemesanan.PemesananResponse;
 import com.example.hay_mart.services.kasir.KasirService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -33,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KasirController {
 
     @Autowired
-    KasirService kasirService;
+    private KasirService kasirService;
 
     @GetMapping("/get-all-kasir")
     public ResponseEntity<Object> getAllKasir(
@@ -43,49 +36,57 @@ public class KasirController {
             @RequestParam(required = false) String sortOrder) {
         try {
             PageResponse<KasirResponse> response = kasirService.getAllKasir(nama, page, 10, sortBy, sortOrder);
-            return ResponseEntity.ok().body(GenericResponse.success(response, "Success Get All Kasir"));
+            return ResponseEntity.ok(GenericResponse.success(response, "Berhasil mengambil semua data kasir."));
         } catch (Exception e) {
-            log.info("Error saat ambil data kasir: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
+            log.error("Gagal mengambil data kasir: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan internal."));
         }
     }
 
     @PostMapping("/update-status/{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") int id, @RequestBody KasirUpdateSatatusRequest req) {
+    public ResponseEntity<Object> updateStatusKasir(
+            @PathVariable("id") int id,
+            @RequestBody KasirUpdateSatatusRequest request) {
         try {
-            kasirService.update(id, req);
-            return ResponseEntity.ok().body(GenericResponse.success(null, "Succes Update status kasir"));
+            kasirService.update(id, request);
+            return ResponseEntity.ok(GenericResponse.success(null, "Berhasil memperbarui status kasir."));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.warn("Gagal update status kasir: {}", e.getReason());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
+            log.error("Kesalahan internal saat update status kasir: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan internal."));
         }
     }
 
     @GetMapping("/history-all-kasir")
-    public ResponseEntity<GenericResponse<List<PemesananResponse>>> getHistory() {
-        List<PemesananResponse> data = kasirService.getAllHistorysKasir();
+    public ResponseEntity<GenericResponse<List<PemesananResponse>>> getHistoryKasir() {
         try {
-            return ResponseEntity.ok(GenericResponse.success(data, "Historys"));
+            List<PemesananResponse> data = kasirService.getAllHistorysKasir();
+            return ResponseEntity.ok(GenericResponse.success(data, "Berhasil mengambil histori kasir."));
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return ResponseEntity.internalServerError().body(GenericResponse.error("Internal Server Error!"));
+            log.error("Gagal mengambil histori kasir: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(GenericResponse.error("Terjadi kesalahan internal."));
         }
     }
 
     @PutMapping(value = "/edit-kasir/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> editKasir(@PathVariable int id, EditKasirRequest request,
-            @RequestParam("Image Kasir") MultipartFile image) {
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> editKasir(
+            @PathVariable int id,
+            EditKasirRequest request,
+            @RequestParam("image Kasir") MultipartFile image) {
         try {
+            log.info("Request edit kasir: {}", request);
+            log.info("Image: {}", image != null ? image.getOriginalFilename() : "tidak ada");
             kasirService.editKasir(id, request, image);
-            return ResponseEntity.ok().body(GenericResponse.success(null, "Data kasir berhasil diperbarui"));
+            return ResponseEntity.ok(GenericResponse.success(null, "Silakan periksa email Anda untuk verifikasi."));
         } catch (ResponseStatusException e) {
-            log.info(e.getMessage());
+            log.warn("Gagal edit kasir: {}", e.getReason());
             return ResponseEntity.status(e.getStatusCode()).body(GenericResponse.error(e.getReason()));
         } catch (Exception e) {
+            log.error("Kesalahan internal saat edit kasir: {}", e.getMessage(), e);
             return ResponseEntity.internalServerError().body(GenericResponse.error(e.getMessage()));
         }
     }
-
 }

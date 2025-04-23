@@ -15,4 +15,5 @@ public interface KasirService {
     void update (int id, KasirUpdateSatatusRequest req);
     List<PemesananResponse> getAllHistorysKasir();
     void editKasir(int id, EditKasirRequest req, MultipartFile image);
+    // void rollbackUser(int id);
 }

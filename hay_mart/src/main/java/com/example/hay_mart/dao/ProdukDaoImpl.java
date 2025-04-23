@@ -69,7 +69,7 @@ public class ProdukDaoImpl implements ProdukDao {
             predicates.add(criteriaBuilder.like(produkRoot.get("nama"), "%" + nama + "%"));
         }
 
-        // Filter harga 
+        // Filter harga
         if (minPrice != null && maxPrice != null) {
             predicates.add(criteriaBuilder.between(produkRoot.get("harga"), minPrice, maxPrice));
         } else if (minPrice != null) {
@@ -83,6 +83,8 @@ public class ProdukDaoImpl implements ProdukDao {
             predicates.add(criteriaBuilder.equal(produkRoot.get("kategori"), kategori));
         }
 
+        // Filter deleted == false (soft delete filter)
+        predicates.add(criteriaBuilder.equal(produkRoot.get("deleted"), false));
         return predicates.toArray(new Predicate[0]);
     }
 }

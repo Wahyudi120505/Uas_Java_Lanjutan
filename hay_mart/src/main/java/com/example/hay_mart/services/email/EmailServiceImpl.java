@@ -3,13 +3,17 @@ package com.example.hay_mart.services.email;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.hay_mart.models.User;
@@ -26,11 +30,11 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.verification.url}")
     private String verificationUrl;
 
-    private final JavaMailSender mailSender;
+    @Autowired
+    JavaMailSender mailSender;
 
-    public EmailServiceImpl(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public void sendVerificationEmail(String to, String nama, String verificationCode) {
         try {
@@ -81,28 +85,43 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    @Transactional
+    // @Transactional
     public void verifyEmail(String email, String code) {
-        try {
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
 
-            if (user.getVerificationCode() == null || !user.getVerificationCode().equals(code)) {
-                throw new RuntimeException("Kode verifikasi tidak valid.");
-            }
-
-            if (user.getVerificationCodeExpiry().isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("Kode verifikasi telah kedaluwarsa.");
-            }
-
-            user.setIsVerified(true);
-            user.setStatus("active");
-            user.setVerificationCode(null);
-            user.setVerificationCodeExpiry(null);
+        if (user.getVerificationCode() == null || !user.getVerificationCode().equals(code)) {
+            throw new RuntimeException("Kode verifikasi tidak valid.");
+        } else if ("pending".equalsIgnoreCase(user.getStatus())
+                && user.getStarDate().plusDays(1).isBefore(LocalDate.now())) {
+            // Hapus user pending yang sudah lewat 1 hari
+            deletePendingUsers();
+            throw new RuntimeException("Pendaftaran telah kadaluwarsa. Silahkan daftar ulang.");
+        } else if (user.getVerificationCodeExpiry().isBefore(LocalDateTime.now())) {
+            // Kode verifikasi kadaluarsa tapi belum 1 hari atau bukan status pending
+            String verificationCode = UUID.randomUUID().toString().substring(0, 8);
+            sendVerificationEmail(user.getEmail(), user.getNama(), verificationCode);
+            user.setVerificationCode(verificationCode);
+            user.setVerificationCodeExpiry(LocalDateTime.now().plusMinutes(5));
             userRepository.save(user);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(user);
+            throw new RuntimeException("Kode verifikasi telah kedaluwarsa. Silahkan Cek email anda kembali!!!");
         }
+        user.setIsVerified(true);
+        user.setStatus("active");
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiry(null);
+
+        userRepository.save(user);
     }
+
+    @Transactional
+    @Override
+    public void deletePendingUsers() {
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        List<User> pendingUsers = userRepository.findByStatusIgnoreCaseAndStarDateBefore("pending", yesterday);
+        System.out.println("Jumlah user pending yang kadaluarsa dan akan dihapus: " + pendingUsers.size());
+        userRepository.deleteAll(pendingUsers);
+    }
+
 }
