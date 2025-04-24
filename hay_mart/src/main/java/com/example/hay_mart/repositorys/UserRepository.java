@@ -8,4 +8,8 @@ import com.example.hay_mart.models.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
-List<User> findByStatusIgnoreCaseAndStarDateBefore(String status, LocalDate date);}
+
+    List<User> findByStatusIgnoreCaseAndStarDateBefore(String status, LocalDate date);
+
+    User findUsersByEmail(String email);
+}

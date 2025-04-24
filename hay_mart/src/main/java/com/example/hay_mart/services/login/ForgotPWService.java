@@ -2,17 +2,14 @@ package com.example.hay_mart.services.login;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.example.hay_mart.dto.login.ForgotPWRequest;
 import com.example.hay_mart.dto.login.ResetPWRequest;
 import com.example.hay_mart.models.User;
 import com.example.hay_mart.repositorys.UserRepository;
 import com.example.hay_mart.services.email.EmailService;
 import com.example.hay_mart.services.email.OtptoEmail;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,7 +46,6 @@ public class ForgotPWService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         otptoEmail.removeOtp(request.getEmail());
-
     }
 
     public String generateOtp() {

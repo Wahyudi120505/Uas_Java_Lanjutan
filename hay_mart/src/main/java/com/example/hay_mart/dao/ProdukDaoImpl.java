@@ -28,11 +28,9 @@ public class ProdukDaoImpl implements ProdukDao {
         CriteriaQuery<Produk> criteriaQuery = criteriaBuilder.createQuery(Produk.class);
         Root<Produk> produkRoot = criteriaQuery.from(Produk.class);
 
-        // Filter
         Predicate[] predicates = createPredicates(criteriaBuilder, produkRoot, nama, kategori, minPrice, maxPrice);
         criteriaQuery.where(predicates);
 
-        // Sorting
         if (sortBy != null && !sortBy.isBlank() && sortOrder != null && !sortOrder.isBlank()) {
             if (sortOrder.equalsIgnoreCase("asc")) {
                 criteriaQuery.orderBy(criteriaBuilder.asc(produkRoot.get(sortBy)));
@@ -41,13 +39,11 @@ public class ProdukDaoImpl implements ProdukDao {
             }
         }
 
-        // Ambil data sesuai halaman
         List<Produk> showProduks = entityManager.createQuery(criteriaQuery)
                 .setFirstResult((page - 1) * size)
                 .setMaxResults(size)
                 .getResultList();
 
-        // Hitung total item untuk pagination
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         Root<Produk> root = countQuery.from(Produk.class);
         countQuery.select(criteriaBuilder.count(root))
@@ -64,12 +60,9 @@ public class ProdukDaoImpl implements ProdukDao {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // Filter nama
         if (nama != null && !nama.isBlank()) {
             predicates.add(criteriaBuilder.like(produkRoot.get("nama"), "%" + nama + "%"));
         }
-
-        // Filter harga
         if (minPrice != null && maxPrice != null) {
             predicates.add(criteriaBuilder.between(produkRoot.get("harga"), minPrice, maxPrice));
         } else if (minPrice != null) {
@@ -78,12 +71,10 @@ public class ProdukDaoImpl implements ProdukDao {
             predicates.add(criteriaBuilder.lessThanOrEqualTo(produkRoot.get("harga"), maxPrice));
         }
 
-        // Filter kategori
         if (kategori != null) {
             predicates.add(criteriaBuilder.equal(produkRoot.get("kategori"), kategori));
         }
 
-        // Filter deleted == false (soft delete filter)
         predicates.add(criteriaBuilder.equal(produkRoot.get("deleted"), false));
         return predicates.toArray(new Predicate[0]);
     }

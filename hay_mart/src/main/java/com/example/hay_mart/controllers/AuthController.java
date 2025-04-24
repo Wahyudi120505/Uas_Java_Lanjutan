@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.example.hay_mart.dto.GenericResponse;
 import com.example.hay_mart.dto.login.ForgotPWRequest;
 import com.example.hay_mart.dto.login.LoginRequest;
@@ -13,7 +12,6 @@ import com.example.hay_mart.dto.login.ResetPWRequest;
 import com.example.hay_mart.services.email.EmailService;
 import com.example.hay_mart.services.login.ForgotPWService;
 import com.example.hay_mart.services.login.LoginService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
