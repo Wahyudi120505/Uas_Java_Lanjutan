@@ -35,13 +35,13 @@ public class EmailConfig {
 
     @Bean
     public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl(); // informasi email
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(mailHost);
         mailSender.setPort(mailPort);
         mailSender.setUsername(mailUsername);
         mailSender.setPassword(mailPassword);
 
-        Properties props = mailSender.getJavaMailProperties(); // server untuk send email
+        Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", mailProtocol);
         props.put("mail.smtp.auth", mailAuth);
         props.put("mail.smtp.starttls.enable", mailStarttls);

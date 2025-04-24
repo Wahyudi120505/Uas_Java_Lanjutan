@@ -2,17 +2,20 @@ package com.example.hay_mart.services.laporan;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import com.example.hay_mart.dto.laporan.LaporanPendapatanResponse;
 
 public interface LaporanPendapatanService {
-    void generateLaporanHarian();
+    List<LaporanPendapatanResponse> generateLaporanHarian();
 
-    void generateLaporanMingguan();
+    List<LaporanPendapatanResponse> generateLaporanMingguan();
 
-    void generateLaporanBulanan();
+    List<LaporanPendapatanResponse> generateLaporanBulanan();
 
-    List<LaporanPendapatanResponse> getLaporanPendapatan();
+    List<LaporanPendapatanResponse> generateLaporanTahunan();
+
+    List<LaporanPendapatanResponse> laporanPendapatan(LocalDate startDate, LocalDate endDate);
 
     ByteArrayInputStream generateExcel(List<LaporanPendapatanResponse> data) throws IOException;
 }

@@ -1,9 +1,7 @@
 package com.example.hay_mart.controllers.kasir;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.example.hay_mart.dto.GenericResponse;
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.dto.kasir.EditKasirRequest;
@@ -24,7 +21,6 @@ import com.example.hay_mart.dto.kasir.KasirResponse;
 import com.example.hay_mart.dto.kasir.KasirUpdateSatatusRequest;
 import com.example.hay_mart.dto.pemesanan.PemesananResponse;
 import com.example.hay_mart.services.kasir.KasirService;
-
 import lombok.extern.slf4j.Slf4j;
 
 @RestController

@@ -2,13 +2,10 @@ package com.example.hay_mart.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import com.example.hay_mart.dto.PageResponse;
 import com.example.hay_mart.models.User;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -25,14 +22,12 @@ public class UserDaoImpl implements UserDao {
     public PageResponse<User> getAllKasir(String nama, int page, int size, String sortBy, String sortOrder) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // Main query untuk ambil data
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
 
         Predicate[] predicates = createPredicates(cb, root, nama);
         cq.where(predicates);
 
-        // Sort
         if (sortBy != null && !sortBy.isBlank() && sortOrder != null && !sortOrder.isBlank()) {
             if (sortOrder.equalsIgnoreCase("asc")) {
                 cq.orderBy(cb.asc(root.get(sortBy)));
@@ -46,7 +41,6 @@ public class UserDaoImpl implements UserDao {
                 .setMaxResults(size)
                 .getResultList();
 
-        // Hitung total
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
         Root<User> countRoot = countQuery.from(User.class);
         countQuery.select(cb.count(countRoot))
@@ -60,10 +54,8 @@ public class UserDaoImpl implements UserDao {
     private Predicate[] createPredicates(CriteriaBuilder cb, Root<User> root, String nama) {
         List<Predicate> predicates = new ArrayList<>();
 
-        // Filter role "KASIR"
         predicates.add(cb.equal(root.get("role").get("roleName"), "KASIR"));
 
-        // Filter nama (optional)
         if (nama != null && !nama.isBlank()) {
             predicates.add(cb.like(cb.lower(root.get("nama")), "%" + nama.toLowerCase() + "%"));
         }
