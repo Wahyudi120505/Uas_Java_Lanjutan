@@ -15,4 +15,5 @@ public class LaporanProdukResponse {
     private Integer stok;
     private Integer hargaSatuan;
     private Integer total;
+    private boolean deleted;
 }

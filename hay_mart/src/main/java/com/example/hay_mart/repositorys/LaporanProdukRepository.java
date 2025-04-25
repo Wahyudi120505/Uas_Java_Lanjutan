@@ -7,4 +7,6 @@ import com.example.hay_mart.models.Produk;
 
 public interface LaporanProdukRepository extends JpaRepository<LaporanProduk, Integer> {
     Optional<LaporanProduk> findByProduk(Produk produk);
+
+    LaporanProduk findByProdukProdukId(Integer produkId);
 }

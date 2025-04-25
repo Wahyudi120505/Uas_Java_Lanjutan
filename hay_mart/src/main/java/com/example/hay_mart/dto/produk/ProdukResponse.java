@@ -17,4 +17,5 @@ public class ProdukResponse {
     private String status;
     private String image;
     private String kategori;
+    private Boolean deleted;
 }

@@ -23,6 +23,7 @@ public class LaporanProdukServiceImpl implements LaporanProdukService {
                         .stok(laporan.getStok())
                         .hargaSatuan(laporan.getHargaSatuan())
                         .total(laporan.getTotal())
+                        .deleted(laporan.getDeleted())
                         .build())
                 .collect(Collectors.toList());
     }

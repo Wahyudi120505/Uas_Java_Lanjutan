@@ -46,6 +46,5 @@ public class Produk {
         }
     }
 
-    @Builder.Default
-    private Boolean deleted = false;
+    private Boolean deleted;
 }

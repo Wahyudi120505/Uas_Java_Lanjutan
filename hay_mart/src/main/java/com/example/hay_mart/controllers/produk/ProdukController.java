@@ -60,7 +60,7 @@ public class ProdukController {
             @RequestParam(required = false) Integer maxPrice) {
         try {
             PageResponse<ProdukResponse> response = produkService.getAllProduks(
-                    nama, kategori, page, 10, sortBy, sortOrder, minPrice, maxPrice);
+                    nama, kategori, page, 3, sortBy, sortOrder, minPrice, maxPrice);
 
             return ResponseEntity.ok().body(GenericResponse.success(response, "Berhasil mengambil daftar produk"));
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class ProdukController {
         }
     }
 
-    @DeleteMapping("/produk/{id}")
+    @DeleteMapping("/delete-produk/{id}")
     public ResponseEntity<Object> deleteProduk(@PathVariable Integer id) {
         try {
             produkService.softDeleteProduk(id);

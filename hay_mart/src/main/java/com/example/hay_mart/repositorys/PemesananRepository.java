@@ -30,10 +30,10 @@ public interface PemesananRepository extends JpaRepository<Pemesanan, Integer> {
                         @Param("start") LocalDateTime start,
                         @Param("end") LocalDateTime end);
 
-        @Query("select p from Pemesanan p where p.userKasir = :user and p.tanggalPembelian between :startDate and :endDate")
-        public List<Pemesanan> pendapatan(User user, LocalDateTime startDate, LocalDateTime endDate);
+        @Query("select p from Pemesanan p where p.tanggalPembelian between :startDate and :endDate")
+        public List<Pemesanan> pendapatan(LocalDateTime startDate, LocalDateTime endDate);
 
-        @Query("select p from Pemesanan p where p.userKasir = :user and p.tanggalPembelian between :startDate and :endDate")
-        public List<Pemesanan> modal(User user, LocalDateTime startDate, LocalDateTime endDate);
+        @Query("select p from Pemesanan p where p.tanggalPembelian between :startDate and :endDate")
+        public List<Pemesanan> modal(LocalDateTime startDate, LocalDateTime endDate);
 
 }

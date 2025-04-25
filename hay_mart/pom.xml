@@ -99,11 +99,23 @@
 			<version>2.0.27</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>5.2.3</version>
-		</dependency>
-	</dependencies>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>5.2.5</version>
+			</dependency>
+			<!-- Apache POI OOXML untuk XSSF -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>5.2.5</version>
+			</dependency>
+			<!-- Apache POI OOXML Schemas untuk dukungan grafik -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml-schemas</artifactId>
+				<version>4.1.2</version>
+			</dependency>
+		</dependencies>
 
 	<build>
 		<plugins>

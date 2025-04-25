@@ -3,73 +3,135 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Verifikasi Email</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Verifikasi Email - HayMart</title>
     <style>
       body {
-        font-family: "Arial", sans-serif;
-        background-color: #f4f8ff;
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f0f4ff;
         margin: 0;
         padding: 0;
+        line-height: 1.6;
       }
       .container {
         max-width: 600px;
-        margin: 20px auto;
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        background: linear-gradient(135deg, #ffffff 0%, #f9fcff 100%);
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
       }
       .header {
-        background-color: #2b7bff;
+        background: linear-gradient(90deg, #2b7bff 0%, #1e90ff 100%);
         color: #ffffff;
-        padding: 15px;
+        padding: 15px; /* Dikurangi dari 20px karena logo dihapus */
         text-align: center;
-        border-radius: 10px 10px 0 0;
+        border-bottom: 4px solid #2563eb;
+      }
+      .header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
       }
       .content {
-        padding: 20px;
+        padding: 30px;
         text-align: center;
-        color: #2c3e50;
+        color: #1a2a44;
+      }
+      .content p {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      .content .greeting {
+        font-size: 18px;
+        font-weight: 500;
+        color: #2b7bff;
       }
       .code {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: bold;
         color: #2b7bff;
+        background: #e6f0ff;
+        padding: 15px 25px;
+        border-radius: 8px;
+        display: inline-block;
         margin: 20px 0;
+        letter-spacing: 2px;
       }
       .btn {
         display: inline-block;
-        margin-top: 15px;
-        padding: 10px 20px;
-        background-color: #2b7bff;
+        padding: 12px 30px;
+        background: linear-gradient(90deg, #2b7bff 0%, #1e90ff 100%);
         color: #ffffff;
         text-decoration: none;
-        font-weight: bold;
-        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin: 15px 0;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(43, 123, 255, 0.3);
+      }
+      .note {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 20px;
       }
       .footer {
-        margin-top: 20px;
-        font-size: 12px;
+        background: #f8fafc;
+        padding: 20px;
         text-align: center;
-        color: #7f8c8d;
+        font-size: 12px;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer a {
+        color: #2b7bff;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+      @media screen and (max-width: 600px) {
+        .container {
+          margin: 10px;
+          border-radius: 8px;
+        }
+        .content {
+          padding: 20px;
+        }
+        .header h2 {
+          font-size: 20px;
+        }
+        .code {
+          font-size: 24px;
+          padding: 10px 20px;
+        }
+        .btn {
+          padding: 10px 25px;
+          font-size: 14px;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="header">
-        <h2>Verifikasi Email Anda</h2>
+        <h2>Verifikasi Email</h2>
       </div>
       <div class="content">
-        <p>Hai, <b>{{nama}}</b>!</p>
-        <p>Terima kasih telah mendaftar di HayMart. Silakan verifikasi email Anda dengan menggunakan kode berikut:</p>
+        <p class="greeting">Halo, <b>{{nama}}</b>!</p>
+        <p>silakan verifikasi alamat email Anda menggunakan kode berikut:</p>
         <div class="code">{{code}}</div>
-        <p>Atau klik tautan berikut untuk verifikasi:</p>
-        <a href="{{verificationUrl}}" class="btn">Verifikasi Email</a>
-        <p>Kode ini berlaku selama 5 menit.</p>
+        <p>Atau, klik tombol di bawah ini untuk verifikasi langsung:</p>
+        <a href="{{verificationUrl}}" class="btn">Verifikasi Sekarang</a>
+        <p class="note">Kode ini hanya berlaku selama <b>5 menit</b>. Jika Anda tidak meminta verifikasi ini, abaikan email ini.</p>
       </div>
       <div class="footer">
-        <p>© 2025 HayMart. Semua Hak Dilindungi.</p>
+        <p>© 2025 <a href="#">HayMart</a>. Semua Hak Dilindungi.</p>
+        <p>Jl. Sukaraja No. 123, Bandung | <a href="#">info@haymart.com</a></p>
       </div>
     </div>
   </body>

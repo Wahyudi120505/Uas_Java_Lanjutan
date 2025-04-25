@@ -32,4 +32,5 @@ public class LaporanProduk {
     private Integer stok;
     private Integer hargaSatuan;
     private Integer total;
+    private Boolean deleted;
 }

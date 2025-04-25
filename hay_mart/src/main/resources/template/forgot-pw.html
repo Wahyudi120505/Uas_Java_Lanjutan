@@ -1,23 +1,112 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>OTP Reset Password</title>
-</head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f8; padding: 40px;">
-  <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 30px; text-align: center;">
-    <h2 style="color: #cf240d;">Reset Password</h2>
-    <p style="font-size: 16px; color: #555;">Kami menerima permintaan untuk mereset password akun Anda.</p>
-    <p style="font-size: 16px; color: #555;">Gunakan kode OTP di bawah ini untuk melanjutkan proses reset password:</p>
-    <div style="margin: 30px 0;">
-      <span style="display: inline-block; font-size: 22px; font-weight: bold; letter-spacing: 6px; background-color: #f0f0f0; padding: 8px 14px; border-radius: 8px; color: #333;">
-        {{otp}}
-      </span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Reset Password - HayMart</title>
+    <style>
+      body {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f0f4ff;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: linear-gradient(135deg, #ffffff 0%, #f9fcff 100%);
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(90deg, #2b7bff 0%, #1e90ff 100%);
+        color: #ffffff;
+        padding: 15px;
+        text-align: center;
+        border-bottom: 4px solid #2563eb;
+      }
+      .header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+      }
+      .content {
+        padding: 30px;
+        text-align: center;
+        color: #1a2a44;
+      }
+      .content p {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      .code {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2b7bff;
+        background: #e6f0ff;
+        padding: 15px 25px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 20px 0;
+        letter-spacing: 2px;
+      }
+      .note {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 20px;
+      }
+      .footer {
+        background: #f8fafc;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer a {
+        color: #2b7bff;
+        text-decoration: none;
+      }
+      .footer a:hover {
+        text-decoration: underline;
+      }
+      @media screen and (max-width: 600px) {
+        .container {
+          margin: 10px;
+          border-radius: 8px;
+        }
+        .content {
+          padding: 20px;
+        }
+        .header h2 {
+          font-size: 20px;
+        }
+        .code {
+          font-size: 24px;
+          padding: 10px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Reset Password</h2>
+      </div>
+      <div class="content">
+        <p>Kami menerima permintaan untuk mereset password akun Anda di HayMart.</p>
+        <p>Gunakan kode OTP di bawah ini untuk melanjutkan proses reset password:</p>
+        <div class="code">{{otp}}</div>
+        <p class="note">Kode OTP ini hanya berlaku selama <b>5 menit</b>.</p>
+        <p class="note">Jika Anda tidak meminta pengaturan ulang password, abaikan email ini.</p>
+      </div>
+      <div class="footer">
+        <p>© 2025 <a href="#">HayMart</a>. Semua Hak Dilindungi.</p>
+        <p>Jl. Sukaraja No. 123, Bandung | <a href="#">info@haymart.com</a></p>
+      </div>
     </div>
-    <p style="color: #888;">Kode OTP ini hanya berlaku selama <strong>5 menit</strong>.</p>
-    <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-    <p style="font-size: 14px; color: #aaa;">Jika Anda tidak meminta pengaturan ulang password, Anda bisa mengabaikan email ini.</p>
-    <p style="font-size: 14px; color: #aaa;">© 2025 HayMart. All rights reserved.</p>
-  </div>
-</body>
+  </body>
 </html>

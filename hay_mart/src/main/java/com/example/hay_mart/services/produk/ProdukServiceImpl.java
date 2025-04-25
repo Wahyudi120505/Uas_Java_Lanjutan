@@ -42,13 +42,19 @@ public class ProdukServiceImpl implements ProdukService {
 
     @Override
     public Integer getProduksPage() {
-        return (int) Math.ceil((double) produkRepository.count() / 10);
+        return (int) Math.ceil((double) produkRepository.count() / 3);
     }
 
     @Override
     public void create(ProdukRequest request, MultipartFile image) {
         try {
             System.out.println("PRODUK : " + request.getNama());
+            Produk produkExists = produkRepository.findByNamaIgnoreCaseAndDeletedTrue(request.getNama());
+            if (produkExists != null) {
+                update(produkExists.getProdukId(), request, image);
+                return;
+            }
+
             Produk produk = toProduk(request, image);
             produkRepository.save(produk);
 
@@ -56,11 +62,15 @@ public class ProdukServiceImpl implements ProdukService {
                     .produk(produk)
                     .namaProduk(produk.getNama())
                     .jumlahTerjual(0)
+                    .stok(produk.getStok())
                     .hargaSatuan(produk.getHarga())
                     .total(0)
+                    .deleted(false)
                     .build();
             laporanProdukRepository.save(laporan);
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             log.error("Error creating product: {}", e.getMessage());
             throw new RuntimeException("Gagal menyimpan produk: " + e.getMessage());
         }
@@ -92,6 +102,7 @@ public class ProdukServiceImpl implements ProdukService {
                     .keterangan(produk.getKeterangan())
                     .status(produk.getStatus())
                     .kategori(produk.getKategori().getNama())
+                    .deleted(produk.getDeleted())
                     .build();
         } catch (IOException | SQLException e) {
             log.error("Error converting product response: {}", e.getMessage());
@@ -105,13 +116,13 @@ public class ProdukServiceImpl implements ProdukService {
                 throw new RuntimeException("Kategori tidak boleh kosong! " + request.getNama());
             }
 
+            if (produkRepository.existsByNamaIgnoreCase(request.getNama())) {
+                throw new RuntimeException("Produk dengan nama '" + request.getNama() + "' sudah ada!");
+            }
+
             Kategori kategori = kategoriRepository.findKategoriByNama(request.getKategori());
             if (kategori == null) {
                 throw new RuntimeException("Kategori tidak ditemukan: " + request.getKategori());
-            }
-
-            if (produkRepository.existsByNamaIgnoreCase(request.getNama())) {
-                throw new RuntimeException("Produk dengan nama '" + request.getNama() + "' sudah ada!");
             }
 
             String status = request.getStok() > 0 ? "Tersedia" : "Tidak Tersedia";
@@ -122,6 +133,7 @@ public class ProdukServiceImpl implements ProdukService {
                     .fotoProduk(convertImage.convertBlob(image))
                     .keterangan(request.getKeterangan())
                     .status(status)
+                    .deleted(false)
                     .kategori(kategori)
                     .build();
         } catch (IOException | SQLException e) {
@@ -135,6 +147,8 @@ public class ProdukServiceImpl implements ProdukService {
         try {
             Produk produk = produkRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Produk dengan id " + id + " tidak ditemukan"));
+            
+            LaporanProduk laporanProduk = laporanProdukRepository.findByProdukProdukId(produk.getProdukId());
 
             if (uproduk.getKategori() == null || uproduk.getKategori().isBlank()) {
                 throw new RuntimeException("Kategori tidak boleh kosong! " + uproduk.getNama());
@@ -157,8 +171,12 @@ public class ProdukServiceImpl implements ProdukService {
             produk.setKeterangan(uproduk.getKeterangan());
             produk.setFotoProduk(new SerialBlob(image.getBytes()));
             produk.setStatus(status);
+            produk.setDeleted(false);
             produk.setKategori(kategori);
             produkRepository.save(produk);
+
+            laporanProduk.setDeleted(false);
+            laporanProdukRepository.save(laporanProduk);
 
         } catch (IOException | SQLException e) {
             log.error("Error updating product: {}", e.getMessage());
@@ -170,7 +188,11 @@ public class ProdukServiceImpl implements ProdukService {
         Produk produk = produkRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produk tidak ditemukan"));
 
+        LaporanProduk laporanProduk = laporanProdukRepository.findByProdukProdukId(produk.getProdukId());
+
         produk.setDeleted(true); // flag sebagai dihapus
+        laporanProduk.setDeleted(true);
         produkRepository.save(produk);
+        laporanProdukRepository.save(laporanProduk);
     }
 }
