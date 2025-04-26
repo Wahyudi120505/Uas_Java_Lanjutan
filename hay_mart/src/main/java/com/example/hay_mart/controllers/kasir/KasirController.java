@@ -32,7 +32,7 @@ public class KasirController {
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder) {
         try {
-            PageResponse<KasirResponse> response = kasirService.getAllKasir(nama, page, 10, sortBy, sortOrder);
+            PageResponse<KasirResponse> response = kasirService.getAllKasir(nama, page, 5, sortBy, sortOrder);
             return ResponseEntity.ok(GenericResponse.success(response, "Berhasil mengambil semua data kasir."));
         } catch (Exception e) {
             log.error("Gagal mengambil data kasir: {}", e.getMessage(), e);

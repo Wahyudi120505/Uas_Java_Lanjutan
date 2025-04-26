@@ -60,7 +60,7 @@ public class ProdukController {
             @RequestParam(required = false) Integer maxPrice) {
         try {
             PageResponse<ProdukResponse> response = produkService.getAllProduks(
-                    nama, kategori, page, 3, sortBy, sortOrder, minPrice, maxPrice);
+                    nama, kategori, page, 5, sortBy, sortOrder, minPrice, maxPrice);
 
             return ResponseEntity.ok().body(GenericResponse.success(response, "Berhasil mengambil daftar produk"));
         } catch (Exception e) {
@@ -76,10 +76,6 @@ public class ProdukController {
             ProdukRequest uproduk,
             @RequestParam("Product Image") MultipartFile file) {
         try {
-            // if (file.isEmpty()) {
-            //     throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST,
-            //             "Gambar produk tidak boleh kosong");
-            // }
             produkService.update(id, uproduk, file);
             return ResponseEntity.ok().body(GenericResponse.success(null, "Produk berhasil diperbarui"));
         } catch (ResponseStatusException e) {
